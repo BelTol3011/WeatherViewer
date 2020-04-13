@@ -1,4 +1,5 @@
 import requests
+import xml.etree.ElementTree as ET
 
 openweather_main_url = "https://api.openweathermap.org/data/2.5/weather?"
 openweather_appID = "75a90db613d4fa920dd60f4bb3be02ef"
@@ -26,8 +27,21 @@ def build_request_string(bodystring: str, appid: str, cityname: str, country: st
     # print(back.text)
     return get_string
 
+def decode_xmlstring(xmlstring):
 
-back = build_request_string(openweather_main_url, openweather_appID, "Berlin", "de", True)
+    root = ET.fromstring(xmlstring)
+    #print(root)
+    #print(root.tag, " ", root.attrib)
+    for child in root:
+        print(child.tag, child.attrib)
+
+
+
+    return root
+
+requ_string = build_request_string(openweather_main_url, openweather_appID, "Berlin", "de", True)
 # print(back)
-xmlback = requests.get(back)
+xmlback = requests.get(requ_string)
 print(xmlback.text)
+root = decode_xmlstring(xmlback.text)
+
