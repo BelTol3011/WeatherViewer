@@ -1,5 +1,5 @@
 from tkinter import *
-
+import Core.error_handler as eh
 
 def mainloop():
     if not root:
@@ -14,7 +14,7 @@ def mainloop():
             print("[GUI] TclError occurred:", e)
             error_count += 1
             if error_count >= max_errors:
-                raise Exception(f"[GUI] Maximum error count of {max_errors} exceeded, terminating.")
+                eh.error(f"[GUI] Maximum error count of {max_errors} exceeded, terminating.")
 
 
 def start():
