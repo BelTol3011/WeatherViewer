@@ -10,7 +10,7 @@ API_KEYS = {
 
 
 # start api worker
-# ApiMain.
+# CoreMain.start_api()
 
 # start gui
 GuiMain.start()
