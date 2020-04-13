@@ -13,6 +13,8 @@ def mainloop():
         except TclError as e:
             print("[GUI] TclError occurred:", e)
             error_count += 1
+            if error_count >= max_errors:
+                raise Exception(f"[GUI] Maximum error count of {max_errors} exceeded, terminating.")
 
 
 def start():
