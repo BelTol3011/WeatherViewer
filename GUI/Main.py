@@ -2,4 +2,10 @@ from tkinter import *
 
 
 def start():
-    pass
+    global root
+
+    root = Tk()
+    root.title("WeatherViewer by JHondah and Belissimo")
+
+
+root = None
