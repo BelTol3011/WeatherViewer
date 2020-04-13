@@ -1,6 +1,7 @@
 from tkinter import *
 import Core.error_handler as eh
 
+
 def mainloop():
     if not root:
         raise Exception("[GUI] No main Window created.")
@@ -18,13 +19,16 @@ def mainloop():
 
 
 def start():
-    global root
+    global root, search_bar
 
     root = Tk()
     root.title("WeatherViewer by JHondah and Belissimo")
-    print(type(root))
-
+    
+    search_bar = Entry(master=root)
+    search_bar.pack(side=TOP, pady=10)
+    
     mainloop()
 
 
 root: Tk
+search_bar: Entry

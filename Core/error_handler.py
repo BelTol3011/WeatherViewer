@@ -1,6 +1,6 @@
 import tkinter.messagebox
 
-mode = "User"
+mode = "Debug"
 
 
 def error(error):
