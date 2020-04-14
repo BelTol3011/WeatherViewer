@@ -46,6 +46,28 @@ database = {
                         "humidity": 39
                     }
                 },
+                1286437286: {
+                    "temperature": {
+                        "real": 12,
+                        "felt": 13
+                    },
+                    "wind": {
+                        "direction": "NW",
+                        "degrees": 310,
+                        "speed": 12
+                    },
+                    "clouds": {
+                        "condition": {
+                            "WeatherAPI": "Mäßig bewölkt",
+                            "OpenWeatherMap": "Mäßig bewölkt"
+                        }
+                    },
+                    "air": {
+                        "view_distance": 10000,
+                        "pressure": 1000,
+                        "humidity": 39
+                    }
+                },
                 "astronomy": {
                     "sunset": 283748323,
                     "sunrise": 897634534,
