@@ -1,5 +1,6 @@
 from tkinter import *
 import Core.error_handler as eh
+import API.API_constants as api_constants
 
 
 def quit():
@@ -9,15 +10,46 @@ def quit():
     root.destroy()
 
 
-def mainloop():
+def mainloop(core_main):
+    global city
+
+    def set_city(event):
+        global city
+        city = cities[search_list_box.curselection()[0]]
+        search_bar.delete(0, END)
+        search_bar.insert(0, city)
+
+    search_list_box.bind("<Double-Button-1>", set_city)
+
+    open_weather_map_api = [api for api in core_main.apis if api.NAME == "OpenWeatherMap"][0]
     if not root:
         raise Exception("[GUI] No main Window created.")
 
     error_count = 0
     max_errors = 10
+    prevtext = search_bar.get()
     while _mainloop:
         try:
             root.update()
+            text = search_bar.get()
+            if (text != "") and (text != city) and (text != prevtext):
+                prevtext = text
+                city = None
+                search_list_box.pack(fill=X, expand=1)
+                cities = [f"{city['name']} - {city['country']} {city['state']}({city['id']})" for city in open_weather_map_api.city_list if
+                          text in city['name']][:200]
+                search_list_box.delete(0, END)
+                status_bar.config(text="Loading cities...")
+                for cityi in cities:
+                    search_list_box.insert(END, cityi)
+                    root.update()
+                status_bar.config(text="Ready...")
+
+            elif (text == prevtext) and (not city):
+                pass
+            else:
+                search_list_box.pack_forget()
+
         except TclError as e:
             print("[GUI] TclError occurred:", e)
             error_count += 1
@@ -30,7 +62,13 @@ def open_api_config(core_main):
 
 
 def start(core_main):
-    global root, search_bar, menu_bar, api_list_box
+    def mouse_wheel(event):
+        scroll = round(event.delta / 60) * -1
+        api_list_box.yview("scroll", scroll, "units")
+        api_status_list_box.yview("scroll", scroll, "units")
+        return "break"
+
+    global root, search_bar, menu_bar, api_list_box, search_list_box, status_bar
     root = Tk()
     root.title("WeatherViewer by JHondah and Belissimo")
     root.protocol("WM_DELETE_WINDOW", quit)
@@ -58,10 +96,13 @@ def start(core_main):
     # MENU CONFIGURATION END ---------------------------------------------------
     root.config(menu=menu_bar)
 
+    status_bar = Label(master=root, bg="#E0E0E0", text="Ready...", anchor=W)
+    status_bar.pack(fill=X, side=BOTTOM)
+
     all_frame = Frame(master=root)
     all_frame.pack(side=TOP, expand=1, fill=BOTH)
 
-    select_city_frame = Frame(master=all_frame)
+    select_city_frame = Frame(master=all_frame, relief=RIDGE, borderwidth=5)
     select_city_frame.pack(fill=X, side=LEFT, expand=1, anchor=N)
 
     Label(master=select_city_frame, text="Type the name of the city you want to have the weather data of:",
@@ -70,32 +111,53 @@ def start(core_main):
     search_bar = Entry(master=select_city_frame)
     search_bar.pack(side=TOP, pady=5, fill=BOTH, padx=10)
 
-    apis_frame = Frame(master=all_frame, relief=RIDGE, borderwidth=5)
-    apis_frame.pack(fill=BOTH, side=RIGHT, anchor=N)
+    search_list_box = Listbox(master=select_city_frame)
 
-    Label(master=apis_frame, text="APIs:").pack(fill=X)
+    apis_frame = Frame(master=all_frame, relief=RIDGE, borderwidth=5)
+    apis_frame.pack(fill=X, side=RIGHT, anchor=N)
+
+    apis_text_frame = Frame(master=apis_frame)
+    apis_text_frame.pack(fill=X, side=TOP, anchor=N, expand=1)
+
+    Label(master=apis_text_frame, text="APIs:").pack(fill=X, side=LEFT, expand=1)
+    Label(master=apis_text_frame, text="Statuses:").pack(fill=X, side=LEFT, expand=1)
 
     listbox_frame = Frame(master=apis_frame)
     listbox_frame.pack(side=TOP, fill=BOTH, expand=1)
 
     api_list_box = Listbox(master=listbox_frame, selectmode=SINGLE)
     api_list_box.pack(side=LEFT, expand=1, fill=BOTH)
-    for api in core_main.apis:
-        api_list_box.insert(END, api.NAME)
-    api_list_box.itemconfig(0)
+
     api_list_box.bind("<Double-Button-1>", lambda event: open_api_config(core_main))
 
-    api_scrollbar = Scrollbar(master=listbox_frame, orient=VERTICAL, command=api_list_box.yview)
+    api_status_list_box = Listbox(master=listbox_frame, selectmode=SINGLE)
+    api_status_list_box.pack(side=LEFT, expand=1, fill=BOTH)
+
+    for api in core_main.apis:
+        api_list_box.insert(END, api.NAME)
+        api_status_list_box.insert(END, api_constants.statuses[api.get_status()])
+
+    api_scrollbar = Scrollbar(master=listbox_frame, orient=VERTICAL,
+                              command=lambda *args: (api_list_box.yview(*args), api_status_list_box.yview(*args)))
+
     api_list_box.config(yscrollcommand=api_scrollbar.set)
+    api_status_list_box.config(yscrollcommand=api_scrollbar.set)
+
+    api_list_box.bind("<MouseWheel>", mouse_wheel)
+    api_status_list_box.bind("<MouseWheel>", mouse_wheel)
+
     api_scrollbar.pack(side=LEFT, fill=Y)
     # canvas = Canvas(master=apis_frame, bg="red")
     # canvas.pack(pady=10, padx=10)
 
-    mainloop()
+    mainloop(core_main)
 
 
+city: str = None
 root: Tk
 search_bar: Entry
 menu_bar: Menu
 _mainloop = True
 api_list_box: Listbox
+search_list_box: Listbox
+status_bar: Label
