@@ -45,7 +45,7 @@ def start(core_main):
 
     api_menu = Menu(menu_bar, tearoff=0)
     for api in core_main.apis:
-        api_menu.add_command(label=api.NAME)
+        api_menu.add_command(label=api.NAME, command=api.CONFIG)
     menu_bar.add_cascade(label="APIs", menu=api_menu)
 
     help_menu = Menu(menu_bar, tearoff=0)

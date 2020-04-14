@@ -11,6 +11,6 @@ for file in files:
         api = importlib.import_module(f"API.APIs.{file[:-3]}")
         apis.append(api)
     except Exception as e:
-        print(f"[Core] File {file} in API/APIs is not a valid module, {e}.")
-
+        # raise Exception(f"[Core] File {file} in API/APIs is not a valid module, {e}.")
+        pass
 print(f"[Core] {len(apis)} APIs detected.")
