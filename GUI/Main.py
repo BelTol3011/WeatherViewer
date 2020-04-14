@@ -1,6 +1,6 @@
 from tkinter import *
 import Core.error_handler as eh
-
+import API.APIs.API_constants as api_constants
 
 def quit():
     global _mainloop
@@ -26,7 +26,7 @@ def mainloop():
 
 
 def start(core_main):
-    global root, search_bar, text_label, menu_bar
+    global root, search_bar, menu_bar, api_list_box
     root = Tk()
     root.title("WeatherViewer by JHondah and Belissimo")
     root.protocol("WM_DELETE_WINDOW", quit)
@@ -54,23 +54,35 @@ def start(core_main):
     # MENU CONFIGURATION END ---------------------------------------------------
     root.config(menu=menu_bar)
 
-    all_frame = Frame(master=root, bg="purple")
+    all_frame = Frame(master=root)
     all_frame.pack(side=TOP, expand=1, fill=BOTH)
 
-    select_city_frame = Frame(master=all_frame, bg="blue")
+    select_city_frame = Frame(master=all_frame)
     select_city_frame.pack(fill=X, side=LEFT, expand=1, anchor=N)
 
     Label(master=select_city_frame, text="Type the name of the city you want to have the weather data of:",
-          justify=CENTER).pack(side=TOP, pady=10, fill=BOTH, padx=10)
+          justify=LEFT, anchor=W).pack(side=TOP, pady=10, fill=BOTH, padx=10)
 
     search_bar = Entry(master=select_city_frame)
     search_bar.pack(side=TOP, pady=5, fill=BOTH, padx=10)
 
     apis_frame = Frame(master=all_frame, relief=RIDGE, borderwidth=5)
-    apis_frame.pack(fill=BOTH, side=LEFT, anchor=N)
+    apis_frame.pack(fill=BOTH, side=RIGHT, anchor=N)
 
     Label(master=apis_frame, text="APIs:").pack(fill=X)
 
+    listbox_frame = Frame(master=apis_frame)
+    listbox_frame.pack(side=TOP, fill=BOTH, expand=1)
+
+    api_list_box = Listbox(master=listbox_frame, selectmode=SINGLE)
+    api_list_box.pack(side=LEFT, expand=1, fill=BOTH)
+    for i in range(100):
+        api_list_box.insert(0, i)
+    api_list_box.itemconfig(0)
+
+    api_scrollbar = Scrollbar(master=listbox_frame, orient=VERTICAL, command=api_list_box.yview)
+    api_list_box.config(yscrollcommand=api_scrollbar.set)
+    api_scrollbar.pack(side=LEFT, fill=Y)
     # canvas = Canvas(master=apis_frame, bg="red")
     # canvas.pack(pady=10, padx=10)
 
@@ -79,6 +91,6 @@ def start(core_main):
 
 root: Tk
 search_bar: Entry
-text_label: Label
 menu_bar: Menu
 _mainloop = True
+api_list_box: Listbox

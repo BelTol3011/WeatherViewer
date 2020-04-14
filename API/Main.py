@@ -1,5 +1,4 @@
 import requests
-import xmltramp2
 from xmltramp2 import xmltramp
 
 openweather_main_url = "https://api.openweathermap.org/data/2.5/weather?"
@@ -37,5 +36,5 @@ def decode_xmlstring(xmlstring):
 requ_string = build_request_string(openweather_main_url, openweather_appID, "Leipzig", "de", True)
 # print(back)
 xmlback = requests.get(requ_string)
-#print(xmlback.text)
+print(xmlback.text)
 root = decode_xmlstring(xmlback.text)
