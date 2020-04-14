@@ -25,7 +25,7 @@ def mainloop():
                 eh.error(f"[GUI] Maximum error count of {max_errors} exceeded, terminating.")
 
 
-def start():
+def start(core_main):
     global root, search_bar, text_label, menu_bar
     root = Tk()
     root.title("WeatherViewer by JHondah and Belissimo")
@@ -44,7 +44,8 @@ def start():
     menu_bar.add_cascade(label="Localization", menu=edit_menu)
 
     api_menu = Menu(menu_bar, tearoff=0)
-    api_menu.add_command(label="OpenWeatherMap")
+    for api in core_main.apis:
+        api_menu.add_command(label=api.NAME)
     menu_bar.add_cascade(label="APIs", menu=api_menu)
 
     help_menu = Menu(menu_bar, tearoff=0)
