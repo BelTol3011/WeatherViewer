@@ -1,7 +1,7 @@
 from tkinter import *
 import Core.error_handler as eh
 import API.API_constants as api_constants
-
+from threading import Thread
 
 def quit():
     global _mainloop
@@ -10,14 +10,19 @@ def quit():
     root.destroy()
 
 
+def format(city):
+    return f"{city['name']} - {city['country']} {city['state']}({city['id']})"
+
+
 def mainloop(core_main):
     global city
 
     def set_city(event):
         global city
-        city = cities[search_list_box.curselection()[0]]
+        city = cities_objects[search_list_box.curselection()[0]]
+        print(city)
         search_bar.delete(0, END)
-        search_bar.insert(0, city)
+        search_bar.insert(0, cities[search_list_box.curselection()[0]])
 
     search_list_box.bind("<Double-Button-1>", set_city)
 
@@ -28,27 +33,36 @@ def mainloop(core_main):
     error_count = 0
     max_errors = 10
     prevtext = search_bar.get()
+
     while _mainloop:
         try:
             root.update()
             text = search_bar.get()
-            if (text != "") and (text != city) and (text != prevtext):
+            if (text != "") and (text != format(city)) and (text != prevtext):
+                print("UPDATE")
                 prevtext = text
-                city = None
-                search_list_box.pack(fill=X, expand=1)
-                cities = [f"{city['name']} - {city['country']} {city['state']}({city['id']})" for city in open_weather_map_api.city_list if
-                          text in city['name']][:200]
+                city = {"name": None, "id": None, "state": None, "country": None}
+                search_list_box_frame.pack(fill=BOTH, expand=1)
+
+                cities = [format(cityi) for cityi in open_weather_map_api.city_list if
+                          text.lower() in cityi['name'].lower()][:200]
+                cities_objects = [cityi for cityi in
+                                  open_weather_map_api.city_list if text.lower() in cityi['name'].lower()][:200]
                 search_list_box.delete(0, END)
                 status_bar.config(text="Loading cities...")
+                i = 0
                 for cityi in cities:
                     search_list_box.insert(END, cityi)
-                    root.update()
+                    if i % 10 == 0:
+                        root.update()
+                    i += 1
                 status_bar.config(text="Ready...")
+                search_list_box.config(height=len(cities))
 
-            elif (text == prevtext) and (not city):
+            elif (text == prevtext) and (not city["name"]):
                 pass
             else:
-                search_list_box.pack_forget()
+                search_list_box_frame.pack_forget()
 
         except TclError as e:
             print("[GUI] TclError occurred:", e)
@@ -68,7 +82,7 @@ def start(core_main):
         api_status_list_box.yview("scroll", scroll, "units")
         return "break"
 
-    global root, search_bar, menu_bar, api_list_box, search_list_box, status_bar
+    global root, search_bar, menu_bar, api_list_box, search_list_box_frame, status_bar, search_list_box
     root = Tk()
     root.title("WeatherViewer by JHondah and Belissimo")
     root.protocol("WM_DELETE_WINDOW", quit)
@@ -103,15 +117,20 @@ def start(core_main):
     all_frame.pack(side=TOP, expand=1, fill=BOTH)
 
     select_city_frame = Frame(master=all_frame, relief=RIDGE, borderwidth=5)
-    select_city_frame.pack(fill=X, side=LEFT, expand=1, anchor=N)
+    select_city_frame.pack(fill=X, side=LEFT, anchor=N, expand=1)
 
-    Label(master=select_city_frame, text="Type the name of the city you want to have the weather data of:",
+    Label(master=select_city_frame, text="Type the name of the city or area you want to have the weather data of:",
           justify=LEFT, anchor=W).pack(side=TOP, pady=10, fill=BOTH, padx=10)
 
     search_bar = Entry(master=select_city_frame)
     search_bar.pack(side=TOP, pady=5, fill=BOTH, padx=10)
 
-    search_list_box = Listbox(master=select_city_frame)
+    search_list_box_frame = Frame(master=select_city_frame)
+    search_list_box = Listbox(master=search_list_box_frame)
+    search_list_box.pack(fill=BOTH, expand=1, anchor=N, side=LEFT)
+    search_scrollbar = Scrollbar(master=search_list_box_frame, command=search_list_box.yview)
+    search_list_box.config(yscrollcommand=search_scrollbar.set)
+    search_scrollbar.pack(side=LEFT, anchor=N, fill=Y)
 
     apis_frame = Frame(master=all_frame, relief=RIDGE, borderwidth=5)
     apis_frame.pack(fill=X, side=RIGHT, anchor=N)
@@ -153,11 +172,12 @@ def start(core_main):
     mainloop(core_main)
 
 
-city: str = None
+city = {"name": None, "id": None, "state": None, "country": None}
 root: Tk
 search_bar: Entry
 menu_bar: Menu
 _mainloop = True
 api_list_box: Listbox
-search_list_box: Listbox
+search_list_box_frame: Frame
 status_bar: Label
+search_list_box: Listbox
