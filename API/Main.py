@@ -5,7 +5,6 @@ from xmltramp2 import xmltramp
 openweather_main_url = "https://api.openweathermap.org/data/2.5/weather?"
 openweather_appID = "75a90db613d4fa920dd60f4bb3be02ef"
 
-
 def build_request_string(bodystring: str, appid: str, cityname: str, country: str, XML: bool):
     # country: de, uk, us  ...
     # api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={your api key}
