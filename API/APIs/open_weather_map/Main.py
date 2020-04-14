@@ -1,6 +1,12 @@
 from tkinter import *
+
+import requests
+from xmltramp2 import xmltramp
+
 from API.API_constants import *
 import json
+
+NAME = "OpenWeatherMap"
 
 openweather_main_url = "https://api.openweathermap.org/data/2.5/weather?"
 # openweather_appID = "75a90db613d4fa920dd60f4bb3be02ef"
