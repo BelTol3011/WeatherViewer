@@ -27,21 +27,19 @@ def build_request_string(bodystring: str, appid: str, cityname: str, country: st
     # print(back.text)
     return get_string
 
-def decode_xmlstring(xmlstring):
 
+def decode_xmlstring(xmlstring):
     root = ET.fromstring(xmlstring)
-    #print(root)
-    #print(root.tag, " ", root.attrib)
+    # print(root)
+    # print(root.tag, " ", root.attrib)
     for child in root:
         print(child.tag, child.attrib)
 
-
-
     return root
+
 
 requ_string = build_request_string(openweather_main_url, openweather_appID, "Berlin", "de", True)
 # print(back)
 xmlback = requests.get(requ_string)
 print(xmlback.text)
 root = decode_xmlstring(xmlback.text)
-

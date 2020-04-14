@@ -2,13 +2,20 @@ from tkinter import *
 import Core.error_handler as eh
 
 
+def quit():
+    global _mainloop
+    print("[GUI] Window close button event, terminating.")
+    _mainloop = False
+    root.destroy()
+
+
 def mainloop():
     if not root:
         raise Exception("[GUI] No main Window created.")
 
     error_count = 0
     max_errors = 10
-    while 1:
+    while _mainloop:
         try:
             root.update()
         except TclError as e:
@@ -22,11 +29,12 @@ def start():
     global root, search_bar, text_label, menu_bar
     root = Tk()
     root.title("WeatherViewer by JHondah and Belissimo")
+    root.protocol("WM_DELETE_WINDOW", quit)
 
     menu_bar = Menu(master=root)
     # MENU CONFIGURATION -------------------------------------------------------
     file_menu = Menu(menu_bar, tearoff=0)
-    file_menu.add_command(label="Exit", command=root.destroy)
+    file_menu.add_command(label="Exit", command=quit)
     menu_bar.add_cascade(label="File", menu=file_menu)
 
     edit_menu = Menu(menu_bar, tearoff=0)
@@ -52,6 +60,8 @@ def start():
     search_bar = Entry(master=root)
     search_bar.pack(side=TOP, pady=5, fill=BOTH, padx=10)
 
+
+
     mainloop()
 
 
@@ -59,3 +69,4 @@ root: Tk
 search_bar: Entry
 text_label: Label
 menu_bar: Menu
+_mainloop = True
