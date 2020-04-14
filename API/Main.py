@@ -1,5 +1,4 @@
 import requests
-# import xml.etree.ElementTree as ET
 import xmltramp2
 from xmltramp2 import xmltramp
 
@@ -9,7 +8,6 @@ openweather_appID = "75a90db613d4fa920dd60f4bb3be02ef"
 
 def build_request_string(bodystring: str, appid: str, cityname: str, country: str, XML: bool):
     # country: de, uk, us  ...
-
     # api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={your api key}
     # api.openweathermap.org/data/2.5/weather?id={city id}&appid={your api key}
     # api.openweathermap.org/data/2.5/find?q=London&units=metric&appid=75a90db613d4fa920dd60f4bb3be02ef
@@ -37,8 +35,8 @@ def decode_xmlstring(xmlstring):
     return root
 
 
-requ_string = build_request_string(openweather_main_url, openweather_appID, "Berlin", "de", True)
+requ_string = build_request_string(openweather_main_url, openweather_appID, "Leipzig", "de", True)
 # print(back)
 xmlback = requests.get(requ_string)
-print(xmlback.text)
+#print(xmlback.text)
 root = decode_xmlstring(xmlback.text)
