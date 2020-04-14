@@ -13,10 +13,10 @@ def configure():
     global API_key
     API_key = API_key_tkvar.get()
     file = open("API/APIs/open_weather_map/API_key.txt", "w")
+    file.write(API_key)
+    file.close()
 
     print("[OpenWeatherMap API] API key set to", API_key)
-
-
 def config():
     global API_key, API_key_tkvar
     root = Tk()
