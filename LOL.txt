@@ -1,0 +1,9 @@
+>>> file = open("pickletest.dab", "wb")
+>>> pickle.dump(database, file)
+>>> file.close()
+
+>>> file = open("pickletest.dab", "rb")
+>>> database_loaded = pickle.load(file)
+>>> file.close()
+>>> database_loaded
+{'Leipzig': {'data': {'2020-4-14': {12864372876: {'temperature': {'real': 12, 'felt': 13}, 'wind': {'direction': 'NW', 'degrees': 310, 'speed': 12}, 'clouds': {'condition': {'WeatherAPI': 'Mäßig bewölkt', 'OpenWeatherMap': 'Mäßig bewölkt'}}, 'air': {'view_distance': 10000, 'pressure': 1000, 'humidity': 39}}, 'astronomy': {'sunset': 283748323, 'sunrise': 897634534, 'moonset': 8234432278, 'moonrise': 237487823, 'moon_type': {'WeatherAPI': 'Quarter', 'OpenWeatherMap': 'Quarter'}}}}, 'longitude': 12.3, 'latitude': 23.2, 'time_zone': '+1'}}

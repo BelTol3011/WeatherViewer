@@ -14,7 +14,7 @@ for file in files:
         print(f"[Core] Name: {api.NAME}")
         apis.append(api)
     except Exception as e:
-        print(f"[Core] File {file} in API/APIs is not a valid module, {e}.")
+        eh.error(f"[Core] File {file} in API/APIs is not a valid module, {e}.")
 print(f"[Core] {len(apis)} APIs detected.")
 
 database = {
@@ -25,6 +25,28 @@ database = {
             "2020-4-14": {
                 # Zeit
                 12864372876: {
+                    "temperature": {
+                        "real": 12,
+                        "felt": 13
+                    },
+                    "wind": {
+                        "direction": "NW",
+                        "degrees": 310,
+                        "speed": 12
+                    },
+                    "clouds": {
+                        "condition": {
+                            "WeatherAPI": "Mäßig bewölkt",
+                            "OpenWeatherMap": "Mäßig bewölkt"
+                        }
+                    },
+                    "air": {
+                        "view_distance": 10000,
+                        "pressure": 1000,
+                        "humidity": 39
+                    }
+                },
+                1286437286: {
                     "temperature": {
                         "real": 12,
                         "felt": 13

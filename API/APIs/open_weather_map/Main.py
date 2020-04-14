@@ -1,7 +1,6 @@
 from tkinter import *
-from API.APIs.API_constants import *
-import requests
-from xmltramp2 import xmltramp
+from API.API_constants import *
+import json
 
 openweather_main_url = "https://api.openweathermap.org/data/2.5/weather?"
 # openweather_appID = "75a90db613d4fa920dd60f4bb3be02ef"
@@ -13,7 +12,8 @@ from tkinter import StringVar
 API_key = open("API/APIs/open_weather_map/API_key.txt").read()
 API_key_tkvar: StringVar
 
-NAME = "OpenWeatherMap"
+city_list_file = open("API/APIs/open_weather_map/city_list.json", encoding="UTF-8").read()
+city_list = json.loads(city_list_file, encoding="UTF-8")
 
 
 def configure():
@@ -32,7 +32,7 @@ def config():
     root.title("OpenWeatherMap API configuration")
     API_key_tkvar = StringVar()
 
-    label = Label(master=root, justify=CENTER, text="API key:")
+    label = Label(master=root, justify=LEFT, text="API key:", anchor=W)
     label.pack(fill="x", padx=10, side=TOP)
 
     submit_frame = Frame(master=root)
