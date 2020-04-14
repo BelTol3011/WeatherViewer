@@ -54,14 +54,25 @@ def start(core_main):
     # MENU CONFIGURATION END ---------------------------------------------------
     root.config(menu=menu_bar)
 
-    text_label = Label(master=root, text="Type the name of the city you want to have the weather data of:",
-                       justify=CENTER)
-    text_label.pack(side=TOP, pady=10, fill=BOTH, padx=10)
+    all_frame = Frame(master=root, bg="purple")
+    all_frame.pack(side=TOP, expand=1, fill=BOTH)
 
-    search_bar = Entry(master=root)
+    select_city_frame = Frame(master=all_frame, bg="blue")
+    select_city_frame.pack(fill=X, side=LEFT, expand=1, anchor=N)
+
+    Label(master=select_city_frame, text="Type the name of the city you want to have the weather data of:",
+          justify=CENTER).pack(side=TOP, pady=10, fill=BOTH, padx=10)
+
+    search_bar = Entry(master=select_city_frame)
     search_bar.pack(side=TOP, pady=5, fill=BOTH, padx=10)
 
+    apis_frame = Frame(master=all_frame, relief=RIDGE, borderwidth=5)
+    apis_frame.pack(fill=BOTH, side=LEFT, anchor=N)
 
+    Label(master=apis_frame, text="APIs:").pack(fill=X)
+
+    # canvas = Canvas(master=apis_frame, bg="red")
+    # canvas.pack(pady=10, padx=10)
 
     mainloop()
 

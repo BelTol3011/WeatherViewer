@@ -12,7 +12,7 @@ for file in files:
             continue
         api = importlib.import_module(f"API.APIs.{file}.Main")
         print(f"[Core] Name: {api.NAME}")
-        garbage = api.CONFIG
+        garbage = api.CONFIG = api.get_status
         apis.append(api)
     except Exception as e:
         eh.error(f"[Core] File {file} in API/APIs is not a valid module, {e}.")

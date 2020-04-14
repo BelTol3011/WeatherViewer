@@ -1,5 +1,6 @@
 # Powered by WeatherAPI.com
 from tkinter import *
+from API.APIs.API_constants import *
 
 # a1433a15876943eb9cc104305201404
 
@@ -14,7 +15,6 @@ def configure():
     file.write(API_key)
     file.close()
     print("[WeatherAPI] API key set to", API_key)
-
 
 
 def config():
@@ -40,6 +40,10 @@ def config():
     API_key_tkvar.set(API_key)
 
     root.mainloop()
+
+
+def get_status():
+    return ACTIVE
 
 
 NAME = "WeatherAPI"

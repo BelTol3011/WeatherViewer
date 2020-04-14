@@ -1,4 +1,5 @@
 from tkinter import *
+from API.APIs.API_constants import *
 
 # 75a90db613d4fa920dd60f4bb3be02ef
 
@@ -17,6 +18,8 @@ def configure():
     file.close()
 
     print("[OpenWeatherMap API] API key set to", API_key)
+
+
 def config():
     global API_key, API_key_tkvar
     root = Tk()
@@ -40,6 +43,10 @@ def config():
     API_key_tkvar.set(API_key)
 
     root.mainloop()
+
+
+def get_status():
+    return ACTIVE
 
 
 NAME = "OpenWeatherMap"
