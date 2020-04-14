@@ -1,15 +1,19 @@
 from tkinter import *
 
+# 75a90db613d4fa920dd60f4bb3be02ef
+
 # Docs: https://openweathermap.org/api
 from tkinter import StringVar
 
-API_key = "75a90db613d4fa920dd60f4bb3be02ef"
+API_key = open("API/APIs/open_weather_map/API_key.txt").read()
 API_key_tkvar: StringVar
 
 
 def configure():
     global API_key
     API_key = API_key_tkvar.get()
+    file = open("API/APIs/open_weather_map/API_key.txt", "w")
+
     print("[OpenWeatherMap API] API key set to", API_key)
 
 
