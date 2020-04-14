@@ -14,7 +14,7 @@ for file in files:
         print(f"[Core] Name: {api.NAME}")
         apis.append(api)
     except Exception as e:
-        print(f"[Core] File {file} in API/APIs is not a valid module, {e}.")
+        eh.error(f"[Core] File {file} in API/APIs is not a valid module, {e}.")
 print(f"[Core] {len(apis)} APIs detected.")
 
 database = {

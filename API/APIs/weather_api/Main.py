@@ -1,10 +1,10 @@
 # Powered by WeatherAPI.com
 from tkinter import *
-from API.APIs.API_constants import *
+from API.API_constants import *
 
 # a1433a15876943eb9cc104305201404
 
-API_key = open("API/APIs/WeatherAPI/API_key.txt").read()
+API_key = open("API/APIs/weather_api/API_key.txt").read()
 API_key_tkvar: StringVar
 
 
@@ -23,7 +23,7 @@ def config():
     root.title("WeatherAPI configuration")
     API_key_tkvar = StringVar()
 
-    label = Label(master=root, justify=CENTER, text="API key:")
+    label = Label(master=root, justify=LEFT, text="API key:", anchor=W)
     label.pack(fill="x", padx=10, side=TOP)
 
     submit_frame = Frame(master=root)

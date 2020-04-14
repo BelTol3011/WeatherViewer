@@ -1,6 +1,6 @@
 from tkinter import *
 import Core.error_handler as eh
-import API.APIs.API_constants as api_constants
+
 
 def quit():
     global _mainloop
@@ -23,6 +23,10 @@ def mainloop():
             error_count += 1
             if error_count >= max_errors:
                 eh.error(f"[GUI] Maximum error count of {max_errors} exceeded, terminating.")
+
+
+def open_api_config(core_main):
+    core_main.apis[api_list_box.curselection()[0]].config()
 
 
 def start(core_main):
@@ -76,9 +80,10 @@ def start(core_main):
 
     api_list_box = Listbox(master=listbox_frame, selectmode=SINGLE)
     api_list_box.pack(side=LEFT, expand=1, fill=BOTH)
-    for i in range(100):
-        api_list_box.insert(0, i)
+    for api in core_main.apis:
+        api_list_box.insert(END, api.NAME)
     api_list_box.itemconfig(0)
+    api_list_box.bind("<Double-Button-1>", lambda event: open_api_config(core_main))
 
     api_scrollbar = Scrollbar(master=listbox_frame, orient=VERTICAL, command=api_list_box.yview)
     api_list_box.config(yscrollcommand=api_scrollbar.set)
