@@ -3,6 +3,7 @@ import Core.error_handler as eh
 import API.API_constants as api_constants
 from threading import Thread
 
+
 def quit():
     global _mainloop
     print("[GUI] Window close button event, terminating.")
@@ -27,6 +28,9 @@ def mainloop(core_main):
     search_list_box.bind("<Double-Button-1>", set_city)
 
     open_weather_map_api = [api for api in core_main.apis if api.NAME == "OpenWeatherMap"][0]
+    if not open_weather_map_api:
+        eh.error("Preview of Cities not possible because there is no API-moule named \"OpenWeatherMap\"")
+
     if not root:
         raise Exception("[GUI] No main Window created.")
 
@@ -42,7 +46,7 @@ def mainloop(core_main):
                 print("UPDATE")
                 prevtext = text
                 city = {"name": None, "id": None, "state": None, "country": None}
-                search_list_box_frame.pack(fill=BOTH, expand=1)
+                search_list_box_frame.pack(fill=BOTH, expand=1, padx=10)
 
                 cities = [format(cityi) for cityi in open_weather_map_api.city_list if
                           text.lower() in cityi['name'].lower()][:200]
@@ -53,7 +57,7 @@ def mainloop(core_main):
                 i = 0
                 for cityi in cities:
                     search_list_box.insert(END, cityi)
-                    if i % 10 == 0:
+                    if i % 20 == 0:
                         root.update()
                     i += 1
                 status_bar.config(text="Ready...")
@@ -64,6 +68,11 @@ def mainloop(core_main):
             else:
                 search_list_box_frame.pack_forget()
 
+            if city["name"]:
+                select_city_info_label.config(text=f"Lat: {city['coord']['lat']}, Lon: {city['coord']['lon']}")
+            else:
+                select_city_info_label.config(text="Please select a city.")
+
         except TclError as e:
             print("[GUI] TclError occurred:", e)
             error_count += 1
@@ -72,7 +81,7 @@ def mainloop(core_main):
 
 
 def open_api_config(core_main):
-    core_main.apis[api_list_box.curselection()[0]].config()
+    core_main.apis[api_list_box.curselection()[0]].CONFIG()
 
 
 def start(core_main):
@@ -82,7 +91,8 @@ def start(core_main):
         api_status_list_box.yview("scroll", scroll, "units")
         return "break"
 
-    global root, search_bar, menu_bar, api_list_box, search_list_box_frame, status_bar, search_list_box
+    global root, search_bar, menu_bar, api_list_box, search_list_box_frame, status_bar, search_list_box, \
+        select_city_info_label
     root = Tk()
     root.title("WeatherViewer by JHondah and Belissimo")
     root.protocol("WM_DELETE_WINDOW", quit)
@@ -113,14 +123,17 @@ def start(core_main):
     status_bar = Label(master=root, bg="#E0E0E0", text="Ready...", anchor=W)
     status_bar.pack(fill=X, side=BOTTOM)
 
-    all_frame = Frame(master=root)
-    all_frame.pack(side=TOP, expand=1, fill=BOTH)
+    control_frame = Frame(master=root)
+    control_frame.pack(side=TOP, fill=BOTH)
 
-    select_city_frame = Frame(master=all_frame, relief=RIDGE, borderwidth=5)
+    select_city_frame = LabelFrame(master=control_frame, relief=RIDGE, borderwidth=5, text="Area Selection")
     select_city_frame.pack(fill=X, side=LEFT, anchor=N, expand=1)
 
     Label(master=select_city_frame, text="Type the name of the city or area you want to have the weather data of:",
           justify=LEFT, anchor=W).pack(side=TOP, pady=10, fill=BOTH, padx=10)
+
+    select_city_info_label = Label(master=select_city_frame, anchor=W, text="Please select a city.")
+    select_city_info_label.pack(side=BOTTOM, anchor=S, fill=X, expand=1, padx=10)
 
     search_bar = Entry(master=select_city_frame)
     search_bar.pack(side=TOP, pady=5, fill=BOTH, padx=10)
@@ -132,7 +145,7 @@ def start(core_main):
     search_list_box.config(yscrollcommand=search_scrollbar.set)
     search_scrollbar.pack(side=LEFT, anchor=N, fill=Y)
 
-    apis_frame = Frame(master=all_frame, relief=RIDGE, borderwidth=5)
+    apis_frame = LabelFrame(master=control_frame, relief=RIDGE, borderwidth=5, text="API Manager", labelanchor=N)
     apis_frame.pack(fill=X, side=RIGHT, anchor=N)
 
     apis_text_frame = Frame(master=apis_frame)
@@ -166,11 +179,13 @@ def start(core_main):
     api_status_list_box.bind("<MouseWheel>", mouse_wheel)
 
     api_scrollbar.pack(side=LEFT, fill=Y)
-    # canvas = Canvas(master=apis_frame, bg="red")
-    # canvas.pack(pady=10, padx=10)
+
+    weather_frame = LabelFrame(master=root, relief=RIDGE, borderwidth=5, text="Weather")
+    weather_frame.pack(side=BOTTOM, expand=1, fill=BOTH, anchor=S)
+
+    Canvas(master=weather_frame, bg="red").pack()
 
     mainloop(core_main)
-
 
 city = {"name": None, "id": None, "state": None, "country": None}
 root: Tk
@@ -181,3 +196,4 @@ api_list_box: Listbox
 search_list_box_frame: Frame
 status_bar: Label
 search_list_box: Listbox
+select_city_info_label: Label

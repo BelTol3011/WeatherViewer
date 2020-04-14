@@ -11,7 +11,7 @@ for file in files:
         if not "Main.py" in os.listdir(f"API/APIs/{file}"):
             continue
         api = importlib.import_module(f"API.APIs.{file}.Main")
-        print(f"[Core] Name: {api.NAME}")
+        print(f"[Core] Imported API {api.NAME}")
         apis.append(api)
     except Exception as e:
         eh.error(f"[Core] File {file} in API/APIs is not a valid module, {e}.")
