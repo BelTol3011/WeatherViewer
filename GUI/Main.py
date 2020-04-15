@@ -5,6 +5,7 @@ import API.API_constants as api_constants
 from threading import Thread
 from ttkthemes import themed_tk
 
+
 def quit():
     global _mainloop
     print("[GUI] Window close button event, terminating.")
@@ -60,7 +61,7 @@ def mainloop(core_main):
                 city = {"name": None, "id": None, "state": None, "country": None}
                 search_list_box_frame.pack(fill=BOTH, expand=1, padx=10)
                 cities_objects = [cityi for cityi in
-                                 open_weather_map_api.city_list if text.lower() in format(cityi).lower()][:500]
+                                  open_weather_map_api.city_list if text.lower() in format(cityi).lower()][:500]
 
                 search_list_box.delete(0, END)
                 status_bar.config(text="Searching trough cities...")
@@ -207,8 +208,6 @@ def start(core_main):
     # main_paned_window.pack(side=TOP, fill=BOTH)
     bottom_paned_window.add(main_paned_window)
 
-
-
     select_city_frame = LabelFrame(master=main_paned_window, relief=GROOVE, borderwidth=5, text="Area Selection")
     # select_city_frame.pack(fill=X, side=LEFT, anchor=N, expand=1)
     main_paned_window.add(select_city_frame)
@@ -286,11 +285,32 @@ def start(core_main):
 
     api_scrollbar.pack(side=LEFT, fill=Y)
 
-    weather_frame = LabelFrame(master=bottom_paned_window, relief=GROOVE, borderwidth=5, text="Weather")
+    analytics_frame = LabelFrame(master=bottom_paned_window, relief=GROOVE, borderwidth=5, text="Analytics")
     # weather_frame.pack(side=BOTTOM, expand=1, fill=BOTH, anchor=S)
-    bottom_paned_window.add(weather_frame)
+    bottom_paned_window.add(analytics_frame)
 
-    Canvas(master=weather_frame, bg="purple").pack(expand=1, fill=BOTH)
+    analytics_frame_notebook = Notebook(master=analytics_frame)
+    analytics_frame_notebook.pack(fill=BOTH, expand=1)
+
+    weather_notebook = Notebook(master=analytics_frame_notebook)  # .pack(expand=1, fill=BOTH)
+    analytics_frame_notebook.add(weather_notebook, text="Weather")
+
+    history_frame = Frame(master=weather_notebook)
+    weather_notebook.add(history_frame, text="History")
+
+    current_frame = Frame(master=weather_notebook)
+    weather_notebook.add(current_frame, text="Current")
+
+    forecast_frame = Frame(master=weather_notebook)
+    weather_notebook.add(forecast_frame, text="Forecast")
+
+
+
+    c = Canvas(master=analytics_frame_notebook, bg="yellow")  # .pack(expand=1, fill=BOTH)
+    analytics_frame_notebook.add(c, text="Astronomy")
+
+    c = Canvas(master=analytics_frame_notebook, bg="green")  # .pack(expand=1, fill=BOTH)
+    analytics_frame_notebook.add(c, text="Warnings")
 
     mainloop(core_main)
 
