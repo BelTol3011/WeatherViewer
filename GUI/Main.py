@@ -186,14 +186,7 @@ def start(core_main):
     themes_menu.add_radiobutton(label="winxpblue", variable=theme_var, command=change_theme)
     theme_var.set(THEME)
 
-    display_menu.add_cascade(label="Themes", menu=themes_menu)
-    menu_bar.add_cascade(label="Display", menu=display_menu)
-
-    help_menu = Menu(menu_bar, tearoff=0)
-    help_menu.add_command(label="About")
-    menu_bar.add_cascade(label="Help", menu=help_menu)
-    # MENU CONFIGURATION END ---------------------------------------------------
-    root.config(menu=menu_bar)
+    # MENU CONFIGURATION PAUSE ----------------------------------------------------------------
 
     status_bar = Label(master=root, text="Ready...", anchor=W)
     # status_bar = Label(master=root, bg="#E0E0E0", text="Ready...", anchor=W)
@@ -208,7 +201,6 @@ def start(core_main):
 
     select_city_frame = LabelFrame(master=main_paned_window, relief=GROOVE, borderwidth=5, text="Area Selection")
     # select_city_frame.pack(fill=X, side=LEFT, anchor=N, expand=1)
-    main_paned_window.add(select_city_frame)
 
     Label(master=select_city_frame, text="Type the name of the city or area you want to have the weather data of:",
           justify=LEFT, anchor=W).pack(side=TOP, pady=10, fill=BOTH, padx=10)
@@ -249,7 +241,7 @@ def start(core_main):
 
     apis_frame = LabelFrame(master=main_paned_window, relief=GROOVE, borderwidth=5, text="API Manager", labelanchor=N)
     # apis_frame.pack(fill=X, side=RIGHT, anchor=N)
-    main_paned_window.add(apis_frame)
+    # main_paned_window.add(apis_frame)
 
     apis_text_frame = Frame(master=apis_frame)
     apis_text_frame.pack(fill=X, side=TOP, anchor=N, expand=1)
@@ -297,6 +289,46 @@ def start(core_main):
 
     c = Canvas(master=analytics_frame_notebook, bg="green")  # .pack(expand=1, fill=BOTH)
     analytics_frame_notebook.add(c, text="Warnings")
+
+    # MENU CONFIGURATION UNPAUSE --------------------------------------------------------------------
+    display_menu.add_cascade(label="Themes", menu=themes_menu)
+    display_menu.add_separator()
+    area_selection_var = IntVar()
+    api_manager_var = IntVar()
+    analytics_var = IntVar()
+
+    def insert_display_menu_add(child, pos, var, pane_window):
+        if var.get():
+            dummy = Label(master=pane_window)
+            pane_window.add(dummy)
+            pane_window.insert(pos, child)
+            pane_window.forget(dummy)
+        else:
+            pane_window.forget(child)
+
+    display_menu.add_checkbutton(label="Area Selection", variable=area_selection_var,
+                                 command=lambda: insert_display_menu_add(select_city_frame, 0,
+                                                                         area_selection_var, main_paned_window))
+    display_menu.add_checkbutton(label="API Manager", variable=api_manager_var,
+                                 command=lambda: insert_display_menu_add(apis_frame, END,
+                                                                         api_manager_var, main_paned_window))
+    display_menu.add_checkbutton(label="Analytics", variable=analytics_var,
+                                 command=lambda: insert_display_menu_add(analytics_frame, END,
+                                                                         analytics_var, bottom_paned_window))
+    # main_paned_window.add(apis_frame)
+    display_menu.invoke(2)
+    display_menu.invoke(3)
+    display_menu.invoke(4)
+
+    # main_paned_window.add(apis_frame)
+
+    menu_bar.add_cascade(label="Display", menu=display_menu)
+
+    help_menu = Menu(menu_bar, tearoff=0)
+    help_menu.add_command(label="About")
+    menu_bar.add_cascade(label="Help", menu=help_menu)
+    # MENU CONFIGURATION END ---------------------------------------------------
+    root.config(menu=menu_bar)
 
     mainloop(core_main)
 
