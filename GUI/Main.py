@@ -135,7 +135,7 @@ def start(core_main):
         return "break"
 
     global root, search_bar, menu_bar, api_list_box, search_list_box_frame, status_bar, search_list_box, \
-        select_city_info_label, latitude_entry, longitude_entry, theme_var, CORE_MAIN
+        select_city_info_label, latitude_entry, longitude_entry, theme_var, CORE_MAIN, api_status_list_box
     CORE_MAIN = core_main
     root = themed_tk.ThemedTk(theme=THEME)
     root.title("WeatherViewer by JHondah and Belissimo")
@@ -184,8 +184,6 @@ def start(core_main):
     themes_menu.add_radiobutton(label="smog", variable=theme_var, command=change_theme)
     themes_menu.add_radiobutton(label="scid", variable=theme_var, command=change_theme)
     themes_menu.add_radiobutton(label="winxpblue", variable=theme_var, command=change_theme)
-    themes_menu.add_separator()
-    themes_menu.add_command(label="Change Theme")
     theme_var.set(THEME)
 
     display_menu.add_cascade(label="Themes", menu=themes_menu)
@@ -264,15 +262,14 @@ def start(core_main):
 
     api_list_box = Listbox(master=listbox_frame, selectmode=SINGLE, height=len(core_main.apis))
     api_list_box.pack(side=LEFT, expand=1, fill=BOTH, anchor=N)
+    api_list_box.bind("<Button-3>", api_listbox_context_menu_popup_event)
 
     api_list_box.bind("<Double-Button-1>", lambda event: open_api_config(core_main))
 
     api_status_list_box = Listbox(master=listbox_frame, selectmode=SINGLE)
     api_status_list_box.pack(side=LEFT, expand=1, fill=BOTH)
 
-    for api in core_main.apis:
-        api_list_box.insert(END, api.NAME)
-        api_status_list_box.insert(END, api_constants.statuses[api.get_status()])
+    update_statuses()
 
     api_scrollbar = Scrollbar(master=listbox_frame, orient=VERTICAL,
                               command=lambda *args: (api_list_box.yview(*args), api_status_list_box.yview(*args)))
@@ -295,17 +292,6 @@ def start(core_main):
     weather_notebook = Notebook(master=analytics_frame_notebook)  # .pack(expand=1, fill=BOTH)
     analytics_frame_notebook.add(weather_notebook, text="Weather")
 
-    history_frame = Frame(master=weather_notebook)
-    weather_notebook.add(history_frame, text="History")
-
-    current_frame = Frame(master=weather_notebook)
-    weather_notebook.add(current_frame, text="Current")
-
-    forecast_frame = Frame(master=weather_notebook)
-    weather_notebook.add(forecast_frame, text="Forecast")
-
-
-
     c = Canvas(master=analytics_frame_notebook, bg="yellow")  # .pack(expand=1, fill=BOTH)
     analytics_frame_notebook.add(c, text="Astronomy")
 
@@ -313,6 +299,29 @@ def start(core_main):
     analytics_frame_notebook.add(c, text="Warnings")
 
     mainloop(core_main)
+
+
+def update_statuses():
+    api_list_box.delete(0, END)
+    api_status_list_box.delete(0, END)
+    for api in CORE_MAIN.apis:
+        api_list_box.insert(END, api.NAME)
+        api_status_list_box.insert(END, api_constants.statuses[api.get_status()])
+
+
+def api_listbox_context_menu_popup_event(event):
+    if api_list_box.curselection():
+        selected_api = CORE_MAIN.apis[api_list_box.curselection()[0]]
+    else:
+        return
+
+    menu = Menu(master=api_list_box, tearoff=0)
+    menu.add_command(label=selected_api.NAME)
+    menu.add_separator()
+    menu.add_command(label="Update statuses", command=update_statuses)
+    menu.add_command(label="Open config", command=selected_api.config)
+    menu.post(event.x_root, event.y_root)
+    api_list_box.focus()
 
 
 city = {"name": None, "id": None, "state": None, "country": None}
@@ -330,3 +339,4 @@ longitude_entry: Entry
 theme_var: StringVar
 THEME: str = "none"
 CORE_MAIN = None
+api_status_list_box: Listbox

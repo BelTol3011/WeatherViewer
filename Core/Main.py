@@ -6,6 +6,19 @@ files = os.listdir("API/APIs")
 
 apis = []
 
+
+def dms_to_decimal(degrees, min, sec):
+    return degrees + (min / 60) + (sec / 3600)
+
+
+def decimal_to_dms(decimal):
+    degrees = int(decimal)
+    temp = (decimal - degrees) * 60
+    minutes = int(temp)
+    seconds = (temp - minutes) * 60
+    return degrees, minutes, seconds
+
+
 for file in files:
     try:
         if not "Main.py" in os.listdir(f"API/APIs/{file}"):
