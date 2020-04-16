@@ -47,4 +47,4 @@ def get_status():
 
 
 NAME = "WeatherAPI"
-CONFIG = config
+CONFIGURE = config

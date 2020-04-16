@@ -11,7 +11,7 @@ statuses = {
     1: "Bereit",
     2: "Fehler",
     3: "Falscher API-key",
-    4: "Server antwortet nicht",
+    4: "Server antwortet nicht/Kann Server nicht erreichen",
     5: "Ungültige Server-Antwort",
     6: "Inaktiv"
 }

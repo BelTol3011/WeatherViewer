@@ -35,7 +35,10 @@ def configure():
 
 def test():
     requ_string = build_request_string(openweather_main_url, API_key, "Berlin", "de", True)
-    answer = requests.get(requ_string)
+    try:
+        answer = requests.get(requ_string)
+    except requests.ConnectionError:
+        return SERVER_NOT_RESPONDING
     if answer.status_code == 200:
         return WORKING
     elif answer.status_code == 401:
@@ -68,7 +71,7 @@ def config():
     root.mainloop()
 
 
-CONFIG = config
+CONFIGURE = config
 
 
 def get_status():

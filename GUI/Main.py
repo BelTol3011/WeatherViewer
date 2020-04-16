@@ -155,7 +155,7 @@ def start(core_main):
 
     api_menu = Menu(menu_bar, tearoff=0)
     for api in core_main.apis:
-        api_menu.add_command(label=api.NAME, command=api.CONFIG)
+        api_menu.add_command(label=api.NAME, command=api.CONFIGURE)
     menu_bar.add_cascade(label="APIs", menu=api_menu)
 
     display_menu = Menu(menu_bar, tearoff=0)
@@ -351,7 +351,7 @@ def api_listbox_context_menu_popup_event(event):
     menu.add_command(label=selected_api.NAME)
     menu.add_separator()
     menu.add_command(label="Update statuses", command=update_statuses)
-    menu.add_command(label="Open config", command=selected_api.config)
+    menu.add_command(label="Open config", command=selected_api.CONFIGURE)
     menu.post(event.x_root, event.y_root)
     api_list_box.focus()
 
