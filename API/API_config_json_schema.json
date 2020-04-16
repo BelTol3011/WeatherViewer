@@ -1,0 +1,107 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://example.com/example.json",
+  "type": "object",
+  "title": "The Root Schema",
+  "description": "The root schema comprises the entire JSON document.",
+  "default": {},
+  "additionalProperties": true,
+  "required": [
+    "name",
+    "main",
+    "search_city_list",
+    "api",
+    "config"
+  ],
+  "properties": {
+    "name": {
+      "$id": "#/properties/name",
+      "type": "string",
+      "title": "The name of the plugin.",
+      "description": "The user identifies the plugins oly by name.",
+      "default": "",
+      "examples": [
+        "WeatherAPI"
+      ]
+    },
+    "main": {
+      "$id": "#/properties/main",
+      "type": "string",
+      "title": "The main file.",
+      "description": "The file, where all the functions tht get accessed by the program are located. It get's imported by the program.",
+      "default": "",
+      "examples": [
+        "Main.py"
+      ]
+    },
+    "search_city_list": {
+      "$id": "#/properties/search_city_list",
+      "type": [
+        "string",
+        "null"
+      ],
+      "title": "The function, that returns a list of cities with a given search string.",
+      "description": "The cities are in the form of {'name': 'The Name of the city', 'country', 'the country id of the city', 'coords':{'lat': 5, 'lon': 7}}.",
+      "default": null,
+      "examples": [
+        "get_cities_by_name"
+      ]
+    },
+    "api": {
+      "$id": "#/properties/api",
+      "type": "object",
+      "title": "The json object, where all the api functions are notated.",
+      "description": "",
+      "default": {},
+      "examples": [
+        {
+          "get_database_snippet": "get_database_snippet",
+          "get_status": "get_status"
+        }
+      ],
+      "additionalProperties": true,
+      "required": [
+        "get_database_snippet",
+        "get_status"
+      ],
+      "properties": {
+        "get_database_snippet": {
+          "$id": "#/properties/api/properties/get_database_snippet",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "The function, that returns to a given timestamp all the data it can get.",
+          "description": "",
+          "default": "",
+          "examples": [
+            "get_database_snippet"
+          ]
+        },
+        "get_status": {
+          "$id": "#/properties/api/properties/get_status",
+          "type": [
+            "string",
+            "null"
+          ],
+          "title": "The function, that returns the status of the api.",
+          "description": "",
+          "default": "",
+          "examples": [
+            "get_status"
+          ]
+        }
+      }
+    },
+    "config": {
+      "$id": "#/properties/config",
+      "type": "string",
+      "title": "The function, that opens the config dialogue.",
+      "description": "",
+      "default": "",
+      "examples": [
+        "config"
+      ]
+    }
+  }
+}

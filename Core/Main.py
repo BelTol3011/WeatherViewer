@@ -21,7 +21,7 @@ def decimal_to_dms(decimal):
 
 for file in files:
     try:
-        if not "Main.py" in os.listdir(f"API/APIs/{file}"):
+        if not "config.dat" in os.listdir(f"API/APIs/{file}"):
             continue
         api = importlib.import_module(f"API.APIs.{file}.Main")
         print(f"[Core] Imported API {api.NAME}")

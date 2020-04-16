@@ -1,0 +1,10 @@
+{
+  "name": "WeatherAPI",
+  "main": "Main.py",
+  "search_city_list": null,
+  "api": {
+    "get_database_snippet": null,
+    "get_status": "get_status"
+  },
+  "config": "config"
+}
