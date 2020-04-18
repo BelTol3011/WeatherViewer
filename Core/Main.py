@@ -3,7 +3,8 @@ import os
 import Core.error_handler as eh
 import json
 from jsonschema import validate
-from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
+#from matplotlib.figure import Figure
 import numpy as np
 
 plugin_config_schema = json.loads(open("API/API_config_json_schema.json").read())
@@ -85,11 +86,21 @@ def get_apis(plugins):
 
 
 def get_matplotlib_figure_weather():
-
-    fig = Figure(figsize=(1, 1), dpi=100)
     t = np.arange(0, 3, .01)
-    fig.add_subplot(111).plot(t, 2 * np.sin(2 * np.pi * t))
-    fig.subplots_adjust(left=0, bottom=None, right=0.999, top=0.99, wspace=None, hspace=None)
+    fig, ax1 = plt.subplots()
+    fig.subplots_adjust(left=0, bottom=0.01, right=0.99, top=0.99, wspace=None, hspace=None)
+
+    #fig = plt.figure(figsize=(1, 1), dpi=100)
+    #fig.add_subplot(111).plot(t, 2 * np.sin(2 * np.pi * t), label='Kurve1')
+
+    ax1.plot(t, 2 * np.sin(2 * np.pi * t), label='Kurve1')
+    ax1.plot(t, 3 * np.sin(3 * np.pi * (t+0.5)), label='Kurve2')
+
+    ax1.tick_params(axis='x', rotation=45)
+    ax1.tick_params(axis='both', which='both', direction='in', pad=-20)
+    #ax1.grid()
+    ax1.legend(frameon=False)
+
 
     return fig
 
