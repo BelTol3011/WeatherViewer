@@ -85,9 +85,12 @@ def get_apis(plugins):
 
 
 def get_matplotlib_figure_weather():
+
     fig = Figure(figsize=(1, 1), dpi=100)
     t = np.arange(0, 3, .01)
     fig.add_subplot(111).plot(t, 2 * np.sin(2 * np.pi * t))
+    fig.subplots_adjust(left=0, bottom=None, right=0.999, top=0.99, wspace=None, hspace=None)
+
     return fig
 
 
