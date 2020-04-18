@@ -11,7 +11,8 @@
     "main",
     "search_city_list",
     "api",
-    "config"
+    "config",
+    "format"
   ],
   "properties": {
     "name": {
@@ -62,7 +63,8 @@
       "additionalProperties": true,
       "required": [
         "get_database_snippet",
-        "get_status"
+        "get_status",
+        "has"
       ],
       "properties": {
         "get_database_snippet": {
@@ -90,6 +92,18 @@
           "examples": [
             "get_status"
           ]
+        },
+        "has": {
+          "$id": "#/properties/api/properties/has",
+          "type": [
+            "boolean"
+          ],
+          "title": "Defines, if the plugin has an api.",
+          "description": "",
+          "default": "",
+          "examples": [
+            true
+          ]
         }
       }
     },
@@ -101,6 +115,19 @@
       "default": "",
       "examples": [
         "config"
+      ]
+    },
+    "format": {
+      "$id": "#/properties/format",
+      "type": [
+        "string",
+        "null"
+      ],
+      "title": "The function, that foramt a city object fo the user",
+      "description": "",
+      "default": "",
+      "examples": [
+        "format"
       ]
     }
   }

@@ -2,113 +2,90 @@ from tkinter import *
 from ttk import *
 import Core.error_handler as eh
 import API.API_constants as api_constants
-from threading import Thread
 from ttkthemes import themed_tk
+from typing import List, Tuple
+import copy
+from matplotlib.backends.backend_tkagg import (
+    FigureCanvasTkAgg, NavigationToolbar2Tk)
+# Implement the default Matplotlib key bindings.
+from matplotlib.backend_bases import key_press_handler
+from matplotlib.figure import Figure
 
 
 def quit():
     global _mainloop
-    print("[GUI] Window close button event, terminating.")
+    print("[GUI] Window close button event, terminating. Ignore any GUI-errors that follow.")
     _mainloop = False
     root.destroy()
 
 
-def format(city):
-    return f"{city['name']} - {city['country']} {city['state']}({city['id']})"
-
-
 def mainloop(core_main):
-    global city
-
-    def set_city(event):
-        global city
-        city = cities_objects[search_list_box.curselection()[0]]
-        print(city)
-        latitude_entry.delete(0, END)
-        longitude_entry.delete(0, END)
-        latitude_entry.insert(0, city["coord"]["lat"])
-        longitude_entry.insert(0, city["coord"]["lon"])
-        latitude_entry.config(state=DISABLED)
-        longitude_entry.config(state=DISABLED)
-        search_bar.delete(0, END)
-        search_bar.insert(0, format(cities_objects[search_list_box.curselection()[0]]))
-
-    search_list_box.bind("<Double-Button-1>", set_city)
-
-    open_weather_map_api = [api for api in core_main.apis if api.NAME == "OpenWeatherMap"][0]
-    if not open_weather_map_api:
-        eh.error("Preview of Cities not possible because there is no API-module named \"OpenWeatherMap\"")
-
+    global city, selected
     if not root:
-        raise Exception("[GUI] No main Window created.")
+        raise eh.error("[GUI] No main Window created yet.")
+
+    def set_city(event: EventType):
+        global selected, city
+        widget: Listbox = event.widget
+        city_index = widget.curselection()[0]
+        widget_index = 0
+        for database in search_listboxes:
+            if database[1] == widget:
+                break
+            widget_index += 1
+        city = data[widget_index][city_index]
+        print(city)
+        selected = True
+
+    for database in search_listboxes:
+        database[1].bind("<Double-Button-1>", set_city)
 
     error_count = 0
     max_errors = 10
     prevtext = search_bar.get()
+    selected = False
+    data = []
 
     while _mainloop:
         try:
             root.update()
-
-            # City Select ----------------------------------------------------------------
             text = search_bar.get()
-            if (text != "") and (text != format(city)) and (text != prevtext):
-                latitude_entry.config(state=NORMAL)
-                longitude_entry.config(state=NORMAL)
-                latitude_entry.delete(0, END)
-                longitude_entry.delete(0, END)
+
+            if (text != prevtext) and (text != ""):
+                selected = False
                 prevtext = text
-                city = {"name": None, "id": None, "state": None, "country": None}
-                search_list_box_frame.pack(fill=BOTH, expand=1, padx=10)
-                cities_objects = [cityi for cityi in
-                                  open_weather_map_api.city_list if text.lower() in format(cityi).lower()][:500]
-
-                search_list_box.delete(0, END)
-                status_bar.config(text="Searching trough cities...")
-                root.update()
-                i = 6
-                for cityi in cities_objects:
-                    search_list_box.insert(END, format(cityi))
-                    if i % 10 == 0:
-                        root.update()
-                    # i += 1
-                root.update()
-                status_bar.config(text="Ready...")
-                search_list_box.config(height=len(cities_objects))
-
-            elif (text == prevtext) and (not city["name"]):
-                pass
-            else:
+                city = city_none
+                search_list_box_frame.pack(fill=BOTH, expand=1)
+                data = []
+                for database in search_listboxes:
+                    status_bar.config(text="Searching cities...")
+                    root.update()
+                    database[1].delete(0, END)
+                    search_list = database[0].search_city_list(text)
+                    elements = [database[0].format(city) for city in search_list]
+                    data.append(search_list)
+                    database[1].insert(0, *elements)
+                    database[1].config(height=len(elements))
+                    status_bar.config(text="Ready...")
+            elif (text == "") and (not selected):
                 search_list_box_frame.pack_forget()
 
-            if city["name"] or (latitude_entry.get() and longitude_entry.get()):
-                select_city_info_label.config(text="City or area selected.")
-            else:
-                select_city_info_label.config(text="Or enter latitude and longitude of you location.")
-
-            if (latitude_entry.get() and longitude_entry.get()) and (not city["name"]):
+            if latitude_entry.get() and longitude_entry.get() and (not selected):
+                selected = True
+                city = copy.deepcopy(city_none)
+                city["coord"].update({"lat": latitude_entry.get(), "lon": longitude_entry.get()})
                 search_bar.delete(0, END)
                 search_bar.config(state=DISABLED)
-                search_list_box_frame.pack_forget()
-                prevtext = ""
-            elif not (latitude_entry.get() and longitude_entry.get()):
+
+            if not (latitude_entry.get() or longitude_entry.get()) and (city == city_none):
+                selected = False
                 search_bar.config(state=NORMAL)
 
-            if (text == "") and city["name"]:
-                city = {"name": None, "id": None, "state": None, "country": None}
-                latitude_entry.config(state=NORMAL)
-                longitude_entry.config(state=NORMAL)
-                latitude_entry.delete(0, END)
-                longitude_entry.delete(0, END)
-
-            if text == "":
-                prevtext = ""
-            # City Select ----------------------------------------------------------------
-
-
-
-
-
+            if selected:
+                search_list_box_frame.pack_forget()
+                select_city_info_label.config(text="Area selected.")
+            else:
+                select_city_info_label.config(text="Or enter latitude and longitude of you location.")
         except TclError as e:
             print("[GUI] TclError occurred:", e)
             error_count += 1
@@ -124,7 +101,7 @@ def change_theme():
 
 
 def open_api_config(core_main):
-    core_main.apis[api_list_box.curselection()[0]].CONFIG()
+    core_main.api_plugins[api_list_box.curselection()[0]].config()
 
 
 def start(core_main):
@@ -134,7 +111,7 @@ def start(core_main):
         api_status_list_box.yview("scroll", scroll, "units")
         return "break"
 
-    global root, search_bar, menu_bar, api_list_box, search_list_box_frame, status_bar, search_list_box, \
+    global root, search_bar, menu_bar, api_list_box, search_list_box_frame, status_bar, search_listboxes, \
         select_city_info_label, latitude_entry, longitude_entry, theme_var, CORE_MAIN, api_status_list_box
     CORE_MAIN = core_main
     root = themed_tk.ThemedTk(theme=THEME)
@@ -144,19 +121,21 @@ def start(core_main):
     menu_bar = Menu(master=root)
     # MENU CONFIGURATION -------------------------------------------------------
     file_menu = Menu(menu_bar, tearoff=0)
+    file_menu.add_command(label="Settings")
+    file_menu.add_separator()
     file_menu.add_command(label="Exit", command=quit)
     menu_bar.add_cascade(label="File", menu=file_menu)
 
-    edit_menu = Menu(menu_bar, tearoff=0)
-    edit_menu.add_radiobutton(label="Germany")
-    edit_menu.add_radiobutton(label="UK/USA")
-    edit_menu.invoke(0)
-    menu_bar.add_cascade(label="Localization", menu=edit_menu)
+    # edit_menu = Menu(menu_bar, tearoff=0)
+    # edit_menu.add_radiobutton(label="Germany")
+    # edit_menu.add_radiobutton(label="UK/USA")
+    # edit_menu.invoke(0)
+    # menu_bar.add_cascade(label="Localization", menu=edit_menu)
 
     api_menu = Menu(menu_bar, tearoff=0)
-    for api in core_main.apis:
-        api_menu.add_command(label=api.NAME, command=api.CONFIGURE)
-    menu_bar.add_cascade(label="APIs", menu=api_menu)
+    for plugin in core_main.plugins:
+        api_menu.add_command(label=plugin.name, command=plugin.config)
+    menu_bar.add_cascade(label="Plugins", menu=api_menu)
 
     display_menu = Menu(menu_bar, tearoff=0)
     themes_menu = Menu(display_menu, tearoff=0)
@@ -189,14 +168,12 @@ def start(core_main):
     # MENU CONFIGURATION PAUSE ----------------------------------------------------------------
 
     status_bar = Label(master=root, text="Ready...", anchor=W)
-    # status_bar = Label(master=root, bg="#E0E0E0", text="Ready...", anchor=W)
     status_bar.pack(fill=X, side=BOTTOM)
 
     bottom_paned_window = PanedWindow(master=root, orient=VERTICAL)
     bottom_paned_window.pack(fill=BOTH, expand=1)
 
     main_paned_window = PanedWindow(master=bottom_paned_window, orient=HORIZONTAL)
-    # main_paned_window.pack(side=TOP, fill=BOTH)
     bottom_paned_window.add(main_paned_window)
 
     select_city_frame = LabelFrame(master=main_paned_window, relief=GROOVE, borderwidth=5, text="Area Selection")
@@ -233,11 +210,16 @@ def start(core_main):
     search_bar.pack(side=TOP, pady=5, fill=BOTH, padx=10)
 
     search_list_box_frame = Frame(master=select_city_frame)
-    search_list_box = Listbox(master=search_list_box_frame)
-    search_list_box.pack(fill=BOTH, expand=1, anchor=N, side=LEFT)
-    search_scrollbar = Scrollbar(master=search_list_box_frame, command=search_list_box.yview)
-    search_list_box.config(yscrollcommand=search_scrollbar.set)
-    search_scrollbar.pack(side=LEFT, anchor=N, fill=Y)
+    search_listboxes = []
+
+    for plugin in [plugin for plugin in core_main.plugins if plugin.search_city_list]:
+        print("add")
+        search_list_box = Listbox(master=search_list_box_frame)
+        search_list_box.pack(fill=BOTH, expand=1, anchor=N, side=LEFT)
+        search_scrollbar = Scrollbar(master=search_list_box_frame, command=search_list_box.yview)
+        search_list_box.config(yscrollcommand=search_scrollbar.set)
+        search_scrollbar.pack(side=LEFT, anchor=N, fill=Y)
+        search_listboxes.append((plugin, search_list_box))
 
     apis_frame = LabelFrame(master=main_paned_window, relief=GROOVE, borderwidth=5, text="API Manager", labelanchor=N)
     # apis_frame.pack(fill=X, side=RIGHT, anchor=N)
@@ -252,7 +234,7 @@ def start(core_main):
     listbox_frame = Frame(master=apis_frame)
     listbox_frame.pack(side=TOP, fill=BOTH, expand=1, anchor=N)
 
-    api_list_box = Listbox(master=listbox_frame, selectmode=SINGLE, height=len(core_main.apis))
+    api_list_box = Listbox(master=listbox_frame, selectmode=SINGLE, height=len(core_main.api_plugins))
     api_list_box.pack(side=LEFT, expand=1, fill=BOTH, anchor=N)
     api_list_box.bind("<Button-3>", api_listbox_context_menu_popup_event)
 
@@ -281,8 +263,27 @@ def start(core_main):
     analytics_frame_notebook = Notebook(master=analytics_frame)
     analytics_frame_notebook.pack(fill=BOTH, expand=1)
 
-    weather_notebook = Notebook(master=analytics_frame_notebook)  # .pack(expand=1, fill=BOTH)
-    analytics_frame_notebook.add(weather_notebook, text="Weather")
+    weather_frame = Frame(master=analytics_frame_notebook)  # .pack(expand=1, fill=BOTH)
+    analytics_frame_notebook.add(weather_frame, text="Weather")
+
+    matplotlib_cavas_weather_frame = Frame(master=weather_frame)
+    matplotlib_cavas_weather_frame.pack(fill=BOTH, expand=1)
+
+    figure = core_main.get_matplotlib_figure_weather()
+
+    canvas = FigureCanvasTkAgg(figure, master=matplotlib_cavas_weather_frame)  # A tk.DrawingArea.
+    canvas.draw()
+    canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
+
+    toolbar = NavigationToolbar2Tk(canvas, matplotlib_cavas_weather_frame)
+    toolbar.update()
+    canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
+
+    def on_key_press(event):
+        print("you pressed {}".format(event.key))
+        key_press_handler(event, canvas, toolbar)
+
+    canvas.mpl_connect("key_press_event", on_key_press)
 
     c = Canvas(master=analytics_frame_notebook, bg="yellow")  # .pack(expand=1, fill=BOTH)
     analytics_frame_notebook.add(c, text="Astronomy")
@@ -336,27 +337,28 @@ def start(core_main):
 def update_statuses():
     api_list_box.delete(0, END)
     api_status_list_box.delete(0, END)
-    for api in CORE_MAIN.apis:
-        api_list_box.insert(END, api.NAME)
-        api_status_list_box.insert(END, api_constants.statuses[api.get_status()])
+    for plugin in CORE_MAIN.api_plugins:
+        api_list_box.insert(END, plugin.name)
+        api_status_list_box.insert(END, api_constants.statuses[plugin.api.get_status()])
 
 
 def api_listbox_context_menu_popup_event(event):
     if api_list_box.curselection():
-        selected_api = CORE_MAIN.apis[api_list_box.curselection()[0]]
+        selected_api = CORE_MAIN.api_plugins[api_list_box.curselection()[0]]
     else:
         return
 
     menu = Menu(master=api_list_box, tearoff=0)
-    menu.add_command(label=selected_api.NAME)
+    menu.add_command(label=selected_api.name)
     menu.add_separator()
     menu.add_command(label="Update statuses", command=update_statuses)
-    menu.add_command(label="Open config", command=selected_api.CONFIGURE)
+    menu.add_command(label="Open config", command=selected_api.config)
     menu.post(event.x_root, event.y_root)
     api_list_box.focus()
 
 
-city = {"name": None, "id": None, "state": None, "country": None}
+city_none = {"name": "Unknown", "id": -1, "state": "Unknown", "country": "Unknown", "coord": {"lat": None, "lon": None}}
+city = city_none
 root: Tk
 search_bar: Entry
 menu_bar: Menu
@@ -370,5 +372,7 @@ latitude_entry: Entry
 longitude_entry: Entry
 theme_var: StringVar
 THEME: str = "none"
-CORE_MAIN = None
+CORE_MAIN: object
 api_status_list_box: Listbox
+search_listboxes: List[Tuple[object, Listbox]]
+selected: bool = False

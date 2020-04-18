@@ -43,7 +43,19 @@ def config():
 
 
 def get_status():
-    return ACTIVE
+    return UNKNOWN
+
+
+def format(city):
+    return city["name"]
+
+
+def nullo(lol):
+    return [{"name": "This is a city"}]
+
+
+def nullol(lol):
+    return lol["name"]
 
 
 NAME = "WeatherAPI"

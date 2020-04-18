@@ -1,0 +1,12 @@
+{
+  "name": "OpenWeatherMap",
+  "main": "Main.py",
+  "search_city_list": "search_city_list",
+  "api": {
+    "get_database_snippet": null,
+    "get_status": "get_status",
+    "has": true
+  },
+  "config": "config",
+  "format": "format"
+}

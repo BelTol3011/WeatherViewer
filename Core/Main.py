@@ -1,10 +1,43 @@
 import importlib
 import os
 import Core.error_handler as eh
+import json
+from jsonschema import validate
+from matplotlib.figure import Figure
+import numpy as np
+
+plugin_config_schema = json.loads(open("API/API_config_json_schema.json").read())
 
 files = os.listdir("API/APIs")
 
-apis = []
+
+class API:
+    def __init__(self, plugin, config_json):
+        self.get_database_snippet = None
+        self.get_status = None
+        self.is_api = config_json["api"]["has"]
+        if self.is_api:
+            if config_json["api"]["get_database_snippet"]:
+                self.get_database_snippet = eval("self.main." + config_json["api"]["get_database_snippet"])
+            if config_json["api"]["get_status"]:
+                self.get_status = eval("plugin.main." + config_json["api"]["get_status"])
+
+
+class Plugin:
+    def __init__(self, config_json, folder):
+        self.folder = folder
+        self.name = config_json["name"]
+        self.main_string = config_json["main"]
+        import_main = os.path.splitext(self.main_string)[0]
+        self.main = importlib.import_module(f"API.APIs.{folder}.{import_main}")
+        self.config = eval("self.main." + config_json["config"])
+        if config_json["search_city_list"]:
+            self.search_city_list = eval("self.main." + config_json["search_city_list"])
+            self.format = eval("self.main." + config_json["format"])
+        else:
+            self.search_city_list = None
+
+        self.api = API(self, config_json)
 
 
 def dms_to_decimal(degrees, min, sec):
@@ -19,20 +52,51 @@ def decimal_to_dms(decimal):
     return degrees, minutes, seconds
 
 
-for file in files:
-    try:
-        if not "config.dat" in os.listdir(f"API/APIs/{file}"):
-            continue
-        api = importlib.import_module(f"API.APIs.{file}.Main")
-        print(f"[Core] Imported API {api.NAME}")
-        apis.append(api)
-    except Exception as e:
-        eh.error(f"[Core] File {file} in API/APIs is not a valid module, {e}.")
-print(f"[Core] {len(apis)} APIs detected.")
+def load_plugins():
+    plugins = []
+    for file in files:
+        name = "unknown"
+        try:
+            if not "config.json" in os.listdir(f"API/APIs/{file}"):
+                continue
+
+            plugin_config = json.loads(open(f"API/APIs/{file}/config.json").read())
+            validate(plugin_config, plugin_config_schema)
+
+            name = plugin_config["name"]
+            main = plugin_config["main"]
+
+            plugin = Plugin(plugin_config, file)
+
+            print(f"[Core] Imported API {plugin.name}")
+            plugins.append(plugin)
+        except Exception as e:
+            eh.error(f"[Core] Couldn't import plugin \"{name}\": {e}.")
+    print(f"[Core] {len(plugins)} Plugins detected.")
+    return plugins
+
+
+def get_apis(plugins):
+    apis = []
+    for plugin in plugins:
+        if plugin.api.is_api:
+            apis.append(plugin)
+    return apis
+
+
+def get_matplotlib_figure_weather():
+    fig = Figure(figsize=(1, 1), dpi=100)
+    t = np.arange(0, 3, .01)
+    fig.add_subplot(111).plot(t, 2 * np.sin(2 * np.pi * t))
+    return fig
+
+
+plugins = load_plugins()
+api_plugins = get_apis(plugins)
 
 database = {
     # Ort
-    "Leipzig": {
+    (12.3, 23.2): {
         "data": {
             # Tag
             "2020-4-14": {
@@ -94,12 +158,6 @@ database = {
             },
 
         },
-        "longitude": 12.3,
-        "latitude": 23.2,
-        "time_zone": "+1"
+        "time_zone": 1
     }
 }
-
-
-def get_temperature_for_day(day):
-    pass

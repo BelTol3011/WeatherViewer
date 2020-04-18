@@ -1,4 +1,4 @@
-ACTIVE = 0
+UNKNOWN = 0
 WORKING = 1
 ERROR = 2
 WRONG_API_KEY = 3
@@ -7,7 +7,7 @@ INVALID_SERVER_RESPONSE = 5
 INACTIVE = 6
 
 statuses = {
-    0: "Aktiv",
+    0: "Unbekannt",
     1: "Bereit",
     2: "Fehler",
     3: "Falscher API-key",

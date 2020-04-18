@@ -23,6 +23,10 @@ city_list_file = open("API/APIs/open_weather_map/city_list.json", encoding="UTF-
 city_list = json.loads(city_list_file, encoding="UTF-8")
 
 
+def search_city_list(search_string):
+    return [city for city in city_list if search_string in city["name"]]
+
+
 def configure():
     global API_key
     API_key = api_key_entry.get()
@@ -71,11 +75,12 @@ def config():
     root.mainloop()
 
 
-CONFIGURE = config
-
-
 def get_status():
     return test()
+
+
+def format(city):
+    return city["name"]
 
 
 def build_request_string(bodystring: str, appid: str, cityname: str, country: str, XML: bool):
