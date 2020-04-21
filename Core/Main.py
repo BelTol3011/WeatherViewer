@@ -85,8 +85,7 @@ def get_apis(plugins):
 
 
 def get_matplotlib_figure_weather():
-
-# alter Aufruf
+    # alter Aufruf
 
     return plt.Figure()
 
@@ -94,13 +93,24 @@ def get_matplotlib_figure_weather():
 plugins = load_plugins()
 api_plugins = get_apis(plugins)
 
+
 database = {
     # Ort
     (12.3, 23.2): {
         "data": {
-            # Tag
-            "2020-4-14": {
-                # Zeit
+            "astronomy": {
+                "2020-04-14": {"sunset": 283748323,
+                               "sunrise": 897634534,
+                               "moonset": 8234432278,
+                               "moonrise": 237487823,
+                               "moon_type": {
+                                   "WeatherAPI": "Quarter",
+                                   "OpenWeatherMap": "Quarter"
+                               }
+                               },
+
+            },
+            "weather": {
                 12864372876: {
                     "temperature": {
                         "real": 12,
@@ -114,7 +124,70 @@ database = {
                     "clouds": {
                         "condition": {
                             "WeatherAPI": "Mäßig bewölkt",
+                            "OpenWeatherMap": "Mittel bewölkt"
+                        }
+                    },
+                    "air": {
+                        "view_distance": 10000,
+                        "pressure": 1000,
+                        "humidity": 39
+                    }
+                },
+                1286437286: {
+                    "temperature": {
+                        "real": -102,
+                        "felt": 13
+                    },
+                    "wind": {
+                        "direction": "NW",
+                        "degrees": 310,
+                        "speed": 12
+                    },
+                    "clouds": {
+                        "condition": {
+                            "WeatherAPI": "Mäßig bewölkt",
                             "OpenWeatherMap": "Mäßig bewölkt"
+                        }
+                    },
+                    "air": {
+                        "view_distance": 10000,
+                        "pressure": 1000,
+                        "humidity": 39
+                    }
+                },
+            }
+        },
+        "time_zone": 1
+    },
+    (-2.3337, 13.6): {
+        "data": {
+            "astronomy": {
+                "2020-04-14": {"sunset": 283748323,
+                               "sunrise": 897634534,
+                               "moonset": 8234432278,
+                               "moonrise": 237487823,
+                               "moon_type": {
+                                   "WeatherAPI": "Quarter",
+                                   "OpenWeatherMap": "Quarter"
+                               }
+                               },
+
+            },
+            "weather": {
+                12864372876: {
+                    "temperature": {
+                        "real": 12,
+                        "felt": 13
+                    },
+                    "wind": {
+                        "direction": "NW",
+                        "degrees": 310,
+                        "speed": 12
+                    },
+                    "clouds": {
+                        "condition": {
+                            "WeatherAPI": "Mäßig bewölkt",
+                            "OpenWeatherMap": "Mittel bewölkt"
                         }
                     },
                     "air": {
@@ -145,19 +218,74 @@ database = {
                         "humidity": 39
                     }
                 },
-                "astronomy": {
-                    "sunset": 283748323,
-                    "sunrise": 897634534,
-                    "moonset": 8234432278,
-                    "moonrise": 237487823,
-                    "moon_type": {
-                        "WeatherAPI": "Quarter",
-                        "OpenWeatherMap": "Quarter"
-                    }
-                }
-            },
-
+            }
         },
         "time_zone": 1
-    }
+    },
+    (-7.5723, -24.2226): {
+        "data": {
+            "astronomy": {
+                "2020-04-14": {"sunset": 283748323,
+                               "sunrise": 897634534,
+                               "moonset": 8234432278,
+                               "moonrise": 237487823,
+                               "moon_type": {
+                                   "WeatherAPI": "Quarter",
+                                   "OpenWeatherMap": "Quarter"
+                               }
+                               },
+
+            },
+            "weather": {
+                12864372876: {
+                    "temperature": {
+                        "real": 12,
+                        "felt": 13
+                    },
+                    "wind": {
+                        "direction": "NW",
+                        "degrees": 310,
+                        "speed": 12
+                    },
+                    "clouds": {
+                        "condition": {
+                            "WeatherAPI": "Mäßig bewölkt",
+                            "OpenWeatherMap": "Mittel bewölkt"
+                        }
+                    },
+                    "air": {
+                        "view_distance": 10000,
+                        "pressure": 1000,
+                        "humidity": 39
+                    }
+                },
+                1286437286: {
+                    "temperature": {
+                        "real": 12,
+                        "felt": 13
+                    },
+                    "wind": {
+                        "direction": "NW",
+                        "degrees": 310,
+                        "speed": 12
+                    },
+                    "clouds": {
+                        "condition": {
+                            "WeatherAPI": "Mäßig bewölkt",
+                            "OpenWeatherMap": "Mäßig bewölkt"
+                        }
+                    },
+                    "air": {
+                        "view_distance": 10000,
+                        "pressure": 1000,
+                        "humidity": 39
+                    }
+                },
+            }
+        },
+        "time_zone": 1
+    },
 }
+
+# for key in database[(12.3, 23.2)]["data"]["weather"]:
+#     print(key, database[(12.3, 23.2)]["data"]["weather"][key]["temperature"]["real"])

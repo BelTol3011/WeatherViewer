@@ -131,7 +131,7 @@ def start(core_main):
         return "break"
 
     global root, search_bar, menu_bar, api_list_box, search_list_box_frame, status_bar, search_listboxes, \
-        select_city_info_label, latitude_entry, longitude_entry, theme_var, CORE_MAIN, api_status_list_box
+        select_city_info_label, latitude_entry, longitude_entry, theme_var, CORE_MAIN, api_status_list_box, city_listbox
     CORE_MAIN = core_main
     root = themed_tk.ThemedTk(theme=THEME)
     root.title("WeatherViewer by JHondah and Belissimo")
@@ -195,6 +195,8 @@ def start(core_main):
     main_paned_window = PanedWindow(master=bottom_paned_window, orient=HORIZONTAL)
     bottom_paned_window.add(main_paned_window)
 
+    # https://www.google.com/maps/place/2%C2%B000'00.0%22N+50%C2%B043'34.0%22W
+
     select_city_frame = LabelFrame(master=main_paned_window, relief=GROOVE, borderwidth=5, text="Area Selection")
 
     Label(master=select_city_frame, text="Type the name of the city or area you want to have the weather data of:",
@@ -239,6 +241,12 @@ def start(core_main):
         search_list_box.config(yscrollcommand=search_scrollbar.set)
         search_scrollbar.pack(side=LEFT, anchor=N, fill=Y)
         search_listboxes.append((plugin, search_list_box))
+
+    city_list_listbox_frame = Frame(master=select_city_frame)
+    city_list_listbox_frame.pack(side=RIGHT, fill=Y)
+
+    city_listbox = Listbox(master=city_list_listbox_frame)
+    city_listbox.pack(fill=BOTH, expand=1)
 
     apis_frame = LabelFrame(master=main_paned_window, relief=GROOVE, borderwidth=5, text="API Manager", labelanchor=N)
 
@@ -391,3 +399,4 @@ CORE_MAIN: object
 api_status_list_box: Listbox
 search_listboxes: List[Tuple[object, Listbox]]
 selected: bool = False
+city_listbox: Listbox
