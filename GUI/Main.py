@@ -196,7 +196,6 @@ def start(core_main):
     bottom_paned_window.add(main_paned_window)
 
     select_city_frame = LabelFrame(master=main_paned_window, relief=GROOVE, borderwidth=5, text="Area Selection")
-    # select_city_frame.pack(fill=X, side=LEFT, anchor=N, expand=1)
 
     Label(master=select_city_frame, text="Type the name of the city or area you want to have the weather data of:",
           justify=LEFT, anchor=W).pack(side=TOP, pady=10, fill=BOTH, padx=10)
@@ -232,17 +231,16 @@ def start(core_main):
     search_listboxes = []
 
     for plugin in [plugin for plugin in core_main.plugins if plugin.search_city_list]:
-        print("add")
-        search_list_box = Listbox(master=search_list_box_frame)
+        search_list_box_and_scrollbar_frame = LabelFrame(master=search_list_box_frame, text=plugin.name, labelanchor=N)
+        search_list_box_and_scrollbar_frame.pack(fill=BOTH, expand=1, anchor=N, side=LEFT)
+        search_list_box = Listbox(master=search_list_box_and_scrollbar_frame)
         search_list_box.pack(fill=BOTH, expand=1, anchor=N, side=LEFT)
-        search_scrollbar = Scrollbar(master=search_list_box_frame, command=search_list_box.yview)
+        search_scrollbar = Scrollbar(master=search_list_box_and_scrollbar_frame, command=search_list_box.yview)
         search_list_box.config(yscrollcommand=search_scrollbar.set)
         search_scrollbar.pack(side=LEFT, anchor=N, fill=Y)
         search_listboxes.append((plugin, search_list_box))
 
     apis_frame = LabelFrame(master=main_paned_window, relief=GROOVE, borderwidth=5, text="API Manager", labelanchor=N)
-    # apis_frame.pack(fill=X, side=RIGHT, anchor=N)
-    # main_paned_window.add(apis_frame)
 
     apis_text_frame = Frame(master=apis_frame)
     apis_text_frame.pack(fill=X, side=TOP, anchor=N, expand=1)
@@ -276,13 +274,12 @@ def start(core_main):
     api_scrollbar.pack(side=LEFT, fill=Y)
 
     analytics_frame = LabelFrame(master=bottom_paned_window, relief=GROOVE, borderwidth=5, text="Analytics")
-    # weather_frame.pack(side=BOTTOM, expand=1, fill=BOTH, anchor=S)
     bottom_paned_window.add(analytics_frame)
 
     analytics_frame_notebook = Notebook(master=analytics_frame)
     analytics_frame_notebook.pack(fill=BOTH, expand=1)
 
-    weather_frame = Frame(master=analytics_frame_notebook)  # .pack(expand=1, fill=BOTH)
+    weather_frame = Frame(master=analytics_frame_notebook)
     analytics_frame_notebook.add(weather_frame, text="Weather")
 
     matplotlib_cavas_weather_frame = Frame(master=weather_frame)
@@ -290,7 +287,7 @@ def start(core_main):
 
     figure = core_main.get_matplotlib_figure_weather()
 
-    canvas = FigureCanvasTkAgg(figure, master=matplotlib_cavas_weather_frame)  # A tk.DrawingArea.
+    canvas = FigureCanvasTkAgg(figure, master=matplotlib_cavas_weather_frame)
     canvas.draw()
     canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
 
@@ -299,7 +296,6 @@ def start(core_main):
     canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
 
     def on_key_press(event):
-        print("you pressed {}".format(event.key))
         key_press_handler(event, canvas, toolbar)
 
     canvas.mpl_connect("key_press_event", on_key_press)
@@ -350,7 +346,7 @@ def start(core_main):
     # MENU CONFIGURATION END ---------------------------------------------------
     root.config(menu=menu_bar)
 
-    mainloop(core_main)
+    mainloop()
 
 
 def update_statuses():

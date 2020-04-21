@@ -107,7 +107,7 @@ def get_matplotlib_figure_weather():
     # ax2.set_ylabel('Messgröße2', color=color)  # we already handled the x-label with ax1
     # ax2.plot(t, data2*0.1, color=color)
 
-    return fig
+    return plt.Figure()
 
 
 plugins = load_plugins()
