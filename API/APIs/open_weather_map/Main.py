@@ -3,7 +3,6 @@ from ttk import *
 import requests
 from xmltramp2 import xmltramp
 import Core.error_handler as eh
-
 from API.API_constants import *
 import json
 
@@ -21,10 +20,6 @@ API_key_tkvar: StringVar
 
 city_list_file = open("API/APIs/open_weather_map/city_list.json", encoding="UTF-8").read()
 city_list = json.loads(city_list_file, encoding="UTF-8")
-
-
-def search_city_list(search_string):
-    return [city for city in city_list if search_string in city["name"]]
 
 
 def configure():
@@ -80,7 +75,11 @@ def get_status():
 
 
 def format(city):
-    return city["name"]
+    return f"{city['name']} - {city['country']}"
+
+
+def search_city_list(search_string):
+    return [city for city in city_list if search_string in format(city)]
 
 
 def build_request_string(bodystring: str, appid: str, cityname: str, country: str, XML: bool):

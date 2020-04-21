@@ -17,13 +17,13 @@ def quit():
     root.destroy()
 
 
-def mainloop(core_main):
-    global city, selected
+def mainloop():
+    global city, selected, prevtext
     if not root:
         raise eh.error("[GUI] No main Window created yet.")
 
     def set_city(event: EventType):
-        global selected, city
+        global selected, city, prevtext
         widget: Listbox = event.widget
         city_index = widget.curselection()[0]
         widget_index = 0
@@ -32,8 +32,11 @@ def mainloop(core_main):
                 break
             widget_index += 1
         city = data[widget_index][city_index]
+        prevtext = search_listboxes[widget_index][0].format(city)
+        search_bar.delete(0, END)
+        search_bar.insert(0, prevtext)
         print(city)
-        selected = True
+        selected = 1
 
     for database in search_listboxes:
         database[1].bind("<Double-Button-1>", set_city)
@@ -56,6 +59,11 @@ def mainloop(core_main):
                 search_list_box_frame.pack(fill=BOTH, expand=1)
                 data = []
                 for database in search_listboxes:
+                    latitude_entry.config(state=NORMAL)
+                    longitude_entry.config(state=NORMAL)
+                    latitude_entry.delete(0, END)
+                    longitude_entry.delete(0, END)
+
                     status_bar.config(text="Searching cities...")
                     root.update()
                     database[1].delete(0, END)
@@ -68,14 +76,27 @@ def mainloop(core_main):
             elif (text == "") and (not selected):
                 search_list_box_frame.pack_forget()
 
-            if latitude_entry.get() and longitude_entry.get() and (not selected):
-                selected = True
-                city = copy.deepcopy(city_none)
-                city["coord"].update({"lat": latitude_entry.get(), "lon": longitude_entry.get()})
+            if selected == 1:
+
+                latitude_entry.delete(0, END)
+                longitude_entry.delete(0, END)
+                latitude_entry.insert(0, city["coord"]["lat"])
+                longitude_entry.insert(0, city["coord"]["lon"])
+                latitude_entry.config(state=DISABLED)
+                longitude_entry.config(state=DISABLED)
+            elif selected == 2:
                 search_bar.delete(0, END)
                 search_bar.config(state=DISABLED)
+            else:
+                search_bar.config(state=NORMAL)
+                latitude_entry.config(state=NORMAL)
+                longitude_entry.config(state=NORMAL)
 
-            if not (latitude_entry.get() or longitude_entry.get()) and (city == city_none):
+            if latitude_entry.get() and longitude_entry.get() and (selected != 1):
+                selected = 2
+                city = copy.deepcopy(city_none)
+                city["coord"].update({"lat": latitude_entry.get(), "lon": longitude_entry.get()})
+            elif (latitude_entry.get() or longitude_entry.get()) and (selected == 2):
                 selected = False
                 search_bar.config(state=NORMAL)
 
@@ -355,7 +376,7 @@ def api_listbox_context_menu_popup_event(event):
     api_list_box.focus()
 
 
-city_none = {"name": "Unknown", "id": -1, "state": "Unknown", "country": "Unknown", "coord": {"lat": None, "lon": None}}
+city_none = {"name": "Unknown", "country": "Unknown", "coord": {"lat": None, "lon": None}}
 city = city_none
 root: Tk
 search_bar: Entry
