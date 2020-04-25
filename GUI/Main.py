@@ -1,13 +1,15 @@
-from tkinter import *
-from ttk import *
-import Core.error_handler as eh
-import API.API_constants as api_constants
-from ttkthemes import themed_tk
-from typing import List, Tuple
 import copy
+from tkinter import *
+from typing import List, Tuple
+
+from matplotlib.backend_bases import key_press_handler
 from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
-from matplotlib.backend_bases import key_press_handler
+from ttk import *
+from ttkthemes import themed_tk
+
+import API.API_constants as api_constants
+import Core.error_handler as eh
 
 
 def quit():
@@ -17,13 +19,37 @@ def quit():
     root.destroy()
 
 
+def update_city_list_listbox():
+    city_listbox.delete(0, END)
+    for couple in cities:
+        if couple[1]["name"] != "Unknown":
+            text = couple[0].format(couple[1])
+        else:
+            text = f"Lat: {couple[1]['coord']['lat']} Lon: {couple[1]['coord']['lon']}"
+        city_listbox.insert(END, text)
+
+
+def city_add():
+    global cities
+    cities.append((plugin, city))
+    update_city_list_listbox()
+
+
+def city_remove():
+    global cities
+    city_index = city_listbox.curselection()[0]
+    city_listbox.delete(city_index)
+    del cities[city_index]
+    city_listbox.selection_set(city_index)
+
+
 def mainloop():
-    global city, selected, prevtext
+    global city, selected, prevtext, plugin
     if not root:
         raise eh.error("[GUI] No main Window created yet.")
 
     def set_city(event: EventType):
-        global selected, city, prevtext
+        global selected, city, prevtext, plugin
         widget: Listbox = event.widget
         city_index = widget.curselection()[0]
         widget_index = 0
@@ -32,7 +58,8 @@ def mainloop():
                 break
             widget_index += 1
         city = data[widget_index][city_index]
-        prevtext = search_listboxes[widget_index][0].format(city)
+        plugin = search_listboxes[widget_index][0]
+        prevtext = plugin.format(city)
         search_bar.delete(0, END)
         search_bar.insert(0, prevtext)
         print(city)
@@ -56,7 +83,7 @@ def mainloop():
                 selected = False
                 prevtext = text
                 city = city_none
-                search_list_box_frame.pack(fill=BOTH, expand=1)
+                search_list_box_frame.pack(fill=BOTH, expand=1, pady=10)
                 data = []
                 for database in search_listboxes:
                     latitude_entry.config(state=NORMAL)
@@ -103,8 +130,16 @@ def mainloop():
             if selected:
                 search_list_box_frame.pack_forget()
                 select_city_info_label.config(text="Area selected.")
+                city_select_add_button.config(state=NORMAL)
             else:
+                city_select_add_button.config(state=DISABLED)
                 select_city_info_label.config(text="Or enter latitude and longitude of you location.")
+
+            if city_listbox.curselection() != ():
+                city_select_remove_button.config(state=NORMAL)
+            else:
+                city_select_remove_button.config(state=DISABLED)
+
         except TclError as e:
             print("[GUI] TclError occurred:", e)
             error_count += 1
@@ -131,7 +166,8 @@ def start(core_main):
         return "break"
 
     global root, search_bar, menu_bar, api_list_box, search_list_box_frame, status_bar, search_listboxes, \
-        select_city_info_label, latitude_entry, longitude_entry, theme_var, CORE_MAIN, api_status_list_box, city_listbox
+        select_city_info_label, latitude_entry, longitude_entry, theme_var, CORE_MAIN, api_status_list_box, city_listbox, \
+        city_select_remove_button, city_select_add_button
     CORE_MAIN = core_main
     root = themed_tk.ThemedTk(theme=THEME)
     root.title("WeatherViewer by JHondah and Belissimo")
@@ -242,16 +278,32 @@ def start(core_main):
         search_scrollbar.pack(side=LEFT, anchor=N, fill=Y)
         search_listboxes.append((plugin, search_list_box))
 
-    city_list_listbox_frame = Frame(master=select_city_frame)
-    city_list_listbox_frame.pack(side=RIGHT, fill=Y)
+    city_list_listbox_frame = LabelFrame(master=select_city_frame, text="City List Viewer")
+    city_list_listbox_frame.pack(side=RIGHT, fill=Y, pady=10, padx=10)
 
-    city_listbox = Listbox(master=city_list_listbox_frame)
-    city_listbox.pack(fill=BOTH, expand=1)
+    city_listbox_and_scrollbar_frame = Frame(city_list_listbox_frame)
+    city_listbox_and_scrollbar_frame.pack(fill=BOTH, expand=1, side=TOP)
+
+    city_listbox = Listbox(master=city_listbox_and_scrollbar_frame)
+    city_listbox.pack(fill=BOTH, expand=1, side=LEFT)
+
+    city_listbox_scrollbar = Scrollbar(master=city_listbox_and_scrollbar_frame, command=city_listbox.yview)
+    city_listbox_scrollbar.pack(fill=Y, expand=1, side=LEFT)
+    city_listbox.config(yscrollcommand=city_listbox_scrollbar.set)
+
+    city_list_listbox_button_frame = Frame(master=city_list_listbox_frame)
+    city_list_listbox_button_frame.pack(side=TOP, fill=X, expand=1)
+
+    city_select_add_button = Button(master=city_list_listbox_button_frame, text="add", command=city_add)
+    city_select_add_button.pack(expand=1, fill=X, side=LEFT)
+
+    city_select_remove_button = Button(master=city_list_listbox_button_frame, text="remove", command=city_remove)
+    city_select_remove_button.pack(expand=1, fill=X, side=LEFT)
 
     apis_frame = LabelFrame(master=main_paned_window, relief=GROOVE, borderwidth=5, text="API Manager", labelanchor=N)
 
     apis_text_frame = Frame(master=apis_frame)
-    apis_text_frame.pack(fill=X, side=TOP, anchor=N, expand=1)
+    apis_text_frame.pack(fill=X, side=TOP, anchor=N)
 
     Label(master=apis_text_frame, text="APIs:").pack(fill=X, side=LEFT, expand=1)
     Label(master=apis_text_frame, text="Statuses:").pack(fill=X, side=LEFT, expand=1)
@@ -382,6 +434,8 @@ def api_listbox_context_menu_popup_event(event):
 
 city_none = {"name": "Unknown", "country": "Unknown", "coord": {"lat": None, "lon": None}}
 city = city_none
+cities: List[Tuple[object, map]] = []
+plugin: object = None
 root: Tk
 search_bar: Entry
 menu_bar: Menu
@@ -400,3 +454,5 @@ api_status_list_box: Listbox
 search_listboxes: List[Tuple[object, Listbox]]
 selected: bool = False
 city_listbox: Listbox
+city_select_remove_button: Button
+city_select_add_button: Button

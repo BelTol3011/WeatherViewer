@@ -85,8 +85,6 @@ def get_apis(plugins):
 
 
 def get_matplotlib_figure_weather():
-    # alter Aufruf
-
     return plt.Figure()
 
 

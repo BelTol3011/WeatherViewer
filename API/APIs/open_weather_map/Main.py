@@ -51,7 +51,6 @@ def config():
     global api_key_entry
     root = Tk()
     root.title("OpenWeatherMap API configuration")
-    API_key_tkvar = StringVar()
 
     label = Label(master=root, justify=LEFT, text="API key:", anchor=W)
     label.pack(fill="x", padx=10, side=TOP)
@@ -79,7 +78,7 @@ def format(city):
 
 
 def search_city_list(search_string):
-    return [city for city in city_list if search_string in format(city)]
+    return [city for city in city_list if search_string in city["name"]][:2000]
 
 
 def build_request_string(bodystring: str, appid: str, cityname: str, country: str, XML: bool):
