@@ -1,10 +1,12 @@
+import json
 from tkinter import *
-from ttk import *
+
 import requests
+from ttk import *
 from xmltramp2 import xmltramp
+
 import Core.error_handler as eh
 from Plugin.API_constants import *
-import json
 
 NAME = "OpenWeatherMap"
 
@@ -18,8 +20,12 @@ from tkinter import StringVar
 API_key = open("Plugin/Plugins/open_weather_map/API_key.txt").read()
 API_key_tkvar: StringVar
 
+print("[OpenWeatherMap] Started loading of database")
 city_list_file = open("Plugin/Plugins/open_weather_map/city_list.json", encoding="UTF-8").read()
 city_list = json.loads(city_list_file, encoding="UTF-8")
+print("[OpenWeatherMap] ... finished!")
+
+
 
 
 def configure():
@@ -131,6 +137,11 @@ def decode_xmlstring(xmlstring):
     }
     # print(root)
     return db_entry
+
+
+api_functions = [
+    (lambda: print(), {})
+]
 
 
 # requ_string = build_request_string(openweather_main_url, API_key, "Leipzig", "de", True)

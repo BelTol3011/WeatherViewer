@@ -3,7 +3,7 @@
   "main": "Main.py",
   "search_city_list": "search_city_list",
   "api": {
-    "api_functions": [],
+    "api_functions": "api_functions",
     "get_status": "get_status",
     "has": true
   },

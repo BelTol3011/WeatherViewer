@@ -19,7 +19,11 @@ class API:
         self.is_api = config_json["api"]["has"]
         if self.is_api:
             if config_json["api"]["api_functions"]:
-                self.api_functions = eval("self.main." + config_json["api"]["api_functions"])
+                api_function_path = config_json["api"]["api_functions"]
+                self.api_functions = []
+                for function in eval("plugin.main." + api_function_path):
+                    pass
+
             if config_json["api"]["get_status"]:
                 self.get_status = eval("plugin.main." + config_json["api"]["get_status"])
 

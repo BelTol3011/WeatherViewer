@@ -70,7 +70,7 @@
         "get_database_snippet": {
           "$id": "#/properties/api/properties/api_functions",
           "type": [
-            "array",
+            "string",
             "null"
           ],
           "title": "The function, that returns to a given timestamp all the data it can get.",
