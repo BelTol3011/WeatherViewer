@@ -78,7 +78,7 @@ def format(city):
 
 
 def search_city_list(search_string):
-    return [city for city in city_list if search_string in city["name"]][:2000]
+    return [city for city in city_list if search_string.lower() in city["name"].lower()][:2000]
 
 
 def build_request_string(bodystring: str, appid: str, cityname: str, country: str, XML: bool):

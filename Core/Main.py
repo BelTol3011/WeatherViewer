@@ -18,8 +18,8 @@ class API:
         self.get_status = None
         self.is_api = config_json["api"]["has"]
         if self.is_api:
-            if config_json["api"]["get_database_snippet"]:
-                self.get_database_snippet = eval("self.main." + config_json["api"]["get_database_snippet"])
+            if config_json["api"]["api_functions"]:
+                self.api_functions = eval("self.main." + config_json["api"]["api_functions"])
             if config_json["api"]["get_status"]:
                 self.get_status = eval("plugin.main." + config_json["api"]["get_status"])
 

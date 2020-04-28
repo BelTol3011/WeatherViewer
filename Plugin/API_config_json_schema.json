@@ -62,15 +62,15 @@
       ],
       "additionalProperties": true,
       "required": [
-        "get_database_snippet",
+        "api_functions",
         "get_status",
         "has"
       ],
       "properties": {
         "get_database_snippet": {
-          "$id": "#/properties/api/properties/get_database_snippet",
+          "$id": "#/properties/api/properties/api_functions",
           "type": [
-            "string",
+            "array",
             "null"
           ],
           "title": "The function, that returns to a given timestamp all the data it can get.",
