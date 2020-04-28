@@ -3,7 +3,7 @@ from ttk import *
 import requests
 from xmltramp2 import xmltramp
 import Core.error_handler as eh
-from API.API_constants import *
+from Plugin.API_constants import *
 import json
 
 NAME = "OpenWeatherMap"
@@ -15,10 +15,10 @@ openweather_main_url = "https://api.openweathermap.org/data/2.5/weather?"
 # Docs: https://openweathermap.org/api
 from tkinter import StringVar
 
-API_key = open("API/APIs/open_weather_map/API_key.txt").read()
+API_key = open("Plugin/Plugins/open_weather_map/API_key.txt").read()
 API_key_tkvar: StringVar
 
-city_list_file = open("API/APIs/open_weather_map/city_list.json", encoding="UTF-8").read()
+city_list_file = open("Plugin/Plugins/open_weather_map/city_list.json", encoding="UTF-8").read()
 city_list = json.loads(city_list_file, encoding="UTF-8")
 
 

@@ -5,11 +5,11 @@ import json
 from jsonschema import validate
 import matplotlib.pyplot as plt
 import numpy as np
-import API.Main as ApiMain
+import Plugin.Main as ApiMain
 
-plugin_config_schema = json.loads(open("API/API_config_json_schema.json").read())
+plugin_config_schema = json.loads(open("Plugin/API_config_json_schema.json").read())
 
-files = os.listdir("API/APIs")
+files = os.listdir("Plugin/Plugins")
 
 
 class API:
@@ -30,7 +30,7 @@ class Plugin:
         self.name = config_json["name"]
         self.main_string = config_json["main"]
         import_main = os.path.splitext(self.main_string)[0]
-        self.main = importlib.import_module(f"API.APIs.{folder}.{import_main}")
+        self.main = importlib.import_module(f"Plugin.Plugins.{folder}.{import_main}")
         self.config = eval("self.main." + config_json["config"])
         if config_json["search_city_list"]:
             self.search_city_list = eval("self.main." + config_json["search_city_list"])
@@ -58,17 +58,17 @@ def load_plugins():
     for file in files:
         name = "unknown"
         try:
-            if "config.json" not in os.listdir(f"API/APIs/{file}"):
+            if "config.json" not in os.listdir(f"Plugin/Plugins/{file}"):
                 continue
 
-            plugin_config = json.loads(open(f"API/APIs/{file}/config.json").read())
+            plugin_config = json.loads(open(f"Plugin/Plugins/{file}/config.json").read())
             validate(plugin_config, plugin_config_schema)
 
             name = plugin_config["name"]
 
             plugin = Plugin(plugin_config, file)
 
-            print(f"[Core] Imported API {plugin.name}")
+            print(f"[Core] Imported Plugin {plugin.name}")
             plugins.append(plugin)
         except Exception as e:
             eh.error(f"[Core] Couldn't import plugin \"{name}\": {e}.")
@@ -109,7 +109,7 @@ database = {
 
             },
             "weather": {
-                12864372876: {
+                (12864372876, 12864399934): {
                     "temperature": {
                         "real": 12,
                         "felt": 13
@@ -155,133 +155,8 @@ database = {
                 },
             }
         },
-        "time_zone": 1
-    },
-    (-2.3337, 13.6): {
-        "data": {
-            "astronomy": {
-                "2020-04-14": {"sunset": 283748323,
-                               "sunrise": 897634534,
-                               "moonset": 8234432278,
-                               "moonrise": 237487823,
-                               "moon_type": {
-                                   "WeatherAPI": "Quarter",
-                                   "OpenWeatherMap": "Quarter"
-                               }
-                               },
-
-            },
-            "weather": {
-                12864372876: {
-                    "temperature": {
-                        "real": 12,
-                        "felt": 13
-                    },
-                    "wind": {
-                        "direction": "NW",
-                        "degrees": 310,
-                        "speed": 12
-                    },
-                    "clouds": {
-                        "condition": {
-                            "WeatherAPI": "Mäßig bewölkt",
-                            "OpenWeatherMap": "Mittel bewölkt"
-                        }
-                    },
-                    "air": {
-                        "view_distance": 10000,
-                        "pressure": 1000,
-                        "humidity": 39
-                    }
-                },
-                1286437286: {
-                    "temperature": {
-                        "real": 12,
-                        "felt": 13
-                    },
-                    "wind": {
-                        "direction": "NW",
-                        "degrees": 310,
-                        "speed": 12
-                    },
-                    "clouds": {
-                        "condition": {
-                            "WeatherAPI": "Mäßig bewölkt",
-                            "OpenWeatherMap": "Mäßig bewölkt"
-                        }
-                    },
-                    "air": {
-                        "view_distance": 10000,
-                        "pressure": 1000,
-                        "humidity": 39
-                    }
-                },
-            }
-        },
-        "time_zone": 1
-    },
-    (-7.5723, -24.2226): {
-        "data": {
-            "astronomy": {
-                "2020-04-14": {"sunset": 283748323,
-                               "sunrise": 897634534,
-                               "moonset": 8234432278,
-                               "moonrise": 237487823,
-                               "moon_type": {
-                                   "WeatherAPI": "Quarter",
-                                   "OpenWeatherMap": "Quarter"
-                               }
-                               },
-
-            },
-            "weather": {
-                12864372876: {
-                    "temperature": {
-                        "real": 12,
-                        "felt": 13
-                    },
-                    "wind": {
-                        "direction": "NW",
-                        "degrees": 310,
-                        "speed": 12
-                    },
-                    "clouds": {
-                        "condition": {
-                            "WeatherAPI": "Mäßig bewölkt",
-                            "OpenWeatherMap": "Mittel bewölkt"
-                        }
-                    },
-                    "air": {
-                        "view_distance": 10000,
-                        "pressure": 1000,
-                        "humidity": 39
-                    }
-                },
-                1286437286: {
-                    "temperature": {
-                        "real": 12,
-                        "felt": 13
-                    },
-                    "wind": {
-                        "direction": "NW",
-                        "degrees": 310,
-                        "speed": 12
-                    },
-                    "clouds": {
-                        "condition": {
-                            "WeatherAPI": "Mäßig bewölkt",
-                            "OpenWeatherMap": "Mäßig bewölkt"
-                        }
-                    },
-                    "air": {
-                        "view_distance": 10000,
-                        "pressure": 1000,
-                        "humidity": 39
-                    }
-                },
-            }
-        },
-        "time_zone": 1
+        "time_zone": 1,
+        "name": "Unknown"
     },
 }
 

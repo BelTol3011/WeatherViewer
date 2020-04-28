@@ -8,7 +8,7 @@ from matplotlib.backends.backend_tkagg import (
 from ttk import *
 from ttkthemes import themed_tk
 
-import API.API_constants as api_constants
+import Plugin.API_constants as api_constants
 import Core.error_handler as eh
 
 
@@ -83,7 +83,7 @@ def mainloop():
                 selected = False
                 prevtext = text
                 city = city_none
-                search_list_box_frame.pack(fill=BOTH, expand=1, pady=10)
+                search_list_box_frame.pack(fill=BOTH, expand=1, pady=10, padx=10)
                 data = []
                 for database in search_listboxes:
                     latitude_entry.config(state=NORMAL)
@@ -95,7 +95,7 @@ def mainloop():
                     root.update()
                     database[1].delete(0, END)
                     search_list = database[0].search_city_list(text)
-                    elements = [database[0].format(city) for city in search_list]
+                    elements = [database[0].format(city) for city in search_list][:2000]
                     data.append(search_list)
                     database[1].insert(0, *elements)
                     database[1].config(height=len(elements))
@@ -130,7 +130,11 @@ def mainloop():
             if selected:
                 search_list_box_frame.pack_forget()
                 select_city_info_label.config(text="Area selected.")
-                city_select_add_button.config(state=NORMAL)
+
+                if city not in [cit[1] for cit in cities]:
+                    city_select_add_button.config(state=NORMAL)
+                else:
+                    city_select_add_button.config(state=DISABLED)
             else:
                 city_select_add_button.config(state=DISABLED)
                 select_city_info_label.config(text="Or enter latitude and longitude of you location.")
@@ -145,6 +149,8 @@ def mainloop():
             error_count += 1
             if error_count >= max_errors:
                 eh.error(f"[GUI] Maximum error count of {max_errors} exceeded, terminating.")
+        except Exception as e:
+            eh.error(e)
 
 
 def change_theme():
@@ -235,14 +241,17 @@ def start(core_main):
 
     select_city_frame = LabelFrame(master=main_paned_window, relief=GROOVE, borderwidth=5, text="Area Selection")
 
-    Label(master=select_city_frame, text="Type the name of the city or area you want to have the weather data of:",
+    left_select_city_frame = Frame(master=select_city_frame)
+    left_select_city_frame.pack(side=LEFT, expand=1, fill=BOTH)
+
+    Label(master=left_select_city_frame, text="Type the name of the city or area you want to have the weather data of:",
           justify=LEFT, anchor=W).pack(side=TOP, pady=10, fill=BOTH, padx=10)
 
-    bottom_city_selection_frame = Frame(master=select_city_frame)
+    bottom_city_selection_frame = Frame(master=left_select_city_frame)
     bottom_city_selection_frame.pack(side=BOTTOM, fill=X, anchor=S, padx=10, expand=1)
 
     select_city_info_label_frame = Frame(master=bottom_city_selection_frame)
-    select_city_info_label_frame.pack(side=LEFT)
+    select_city_info_label_frame.pack(side=LEFT, pady=10+2)
 
     select_city_info_label = Label(master=select_city_info_label_frame, anchor=W,
                                    text="Or enter latitude and longitude of you location.")
@@ -262,10 +271,10 @@ def start(core_main):
     longitude_entry = Entry(master=latlon_frame)
     longitude_entry.pack(side=LEFT, anchor=W, fill=X, expand=1)
 
-    search_bar = Entry(master=select_city_frame)
+    search_bar = Entry(master=left_select_city_frame)
     search_bar.pack(side=TOP, pady=5, fill=BOTH, padx=10)
 
-    search_list_box_frame = Frame(master=select_city_frame)
+    search_list_box_frame = Frame(master=left_select_city_frame)
     search_listboxes = []
 
     for plugin in [plugin for plugin in core_main.plugins if plugin.search_city_list]:
@@ -292,7 +301,7 @@ def start(core_main):
     city_listbox.config(yscrollcommand=city_listbox_scrollbar.set)
 
     city_list_listbox_button_frame = Frame(master=city_list_listbox_frame)
-    city_list_listbox_button_frame.pack(side=TOP, fill=X, expand=1)
+    city_list_listbox_button_frame.pack(side=BOTTOM, fill=X)
 
     city_select_add_button = Button(master=city_list_listbox_button_frame, text="add", command=city_add)
     city_select_add_button.pack(expand=1, fill=X, side=LEFT)
@@ -432,7 +441,7 @@ def api_listbox_context_menu_popup_event(event):
     api_list_box.focus()
 
 
-city_none = {"name": "Unknown", "country": "Unknown", "coord": {"lat": None, "lon": None}}
+city_none: map = {"name": "Unknown", "country": "Unknown", "coord": {"lat": None, "lon": None}}
 city = city_none
 cities: List[Tuple[object, map]] = []
 plugin: object = None

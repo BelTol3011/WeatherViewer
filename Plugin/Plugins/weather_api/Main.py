@@ -1,17 +1,17 @@
 # Powered by WeatherAPI.com
 from tkinter import *
-from API.API_constants import *
+from Plugin.API_constants import *
 
 # a1433a15876943eb9cc104305201404
 
-API_key = open("API/APIs/weather_api/API_key.txt").read()
+API_key = open("Plugin/Plugins/weather_api/API_key.txt").read()
 API_key_tkvar: StringVar
 
 
 def configure():
     global API_key
     API_key = API_key_tkvar.get()
-    file = open("API/APIs/WeatherAPI/API_key.txt", "w")
+    file = open("Plugin/Plugins/WeatherAPI/API_key.txt", "w")
     file.write(API_key)
     file.close()
     print("[WeatherAPI] API key set to", API_key)

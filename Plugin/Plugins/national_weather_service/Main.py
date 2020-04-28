@@ -1,7 +1,7 @@
 from tkinter import *
-import API.API_constants as api_constants
+import Plugin.API_constants as api_constants
 
-NAME = "Deutscher Wetterdienst"
+NAME = "National Weather Service (USA)"
 CONFIGURE = lambda: Tk().mainloop()
 
 def get_status():
