@@ -165,11 +165,13 @@ def open_api_config(core_main):
 
 
 def apis_pause():
-    pass
+    apis_pause_button.config(state=DISABLED)
+    apis_play_button.config(state=NORMAL)
 
 
-def apis_start():
-    pass
+def apis_play():
+    apis_play_button.config(state=DISABLED)
+    apis_pause_button.config(state=NORMAL)
 
 
 def start(core_main):
@@ -327,11 +329,13 @@ def start(core_main):
     api_button_frame = Frame(apis_frame)
     api_button_frame.pack(fill=X, side=TOP)
 
-    apis_play_button = Button(api_button_frame, image=play_image)
+    apis_play_button = Button(api_button_frame, image=play_image, command=apis_play)
     apis_play_button.pack(side=LEFT)
 
-    apis_pause_button = Button(api_button_frame, image=pause_image)
-    apis_pause_button.pack(side=LEFT)
+    apis_pause_button = Button(api_button_frame, image=pause_image, command=apis_pause)
+    apis_pause_button.pack(side=LEFT, padx=5)
+
+    apis_pause()
 
     apis_text_frame = Frame(master=apis_frame)
     apis_text_frame.pack(fill=X, side=TOP, anchor=N)
