@@ -1,6 +1,6 @@
 import json
 from tkinter import *
-
+import time
 import requests
 from ttk import *
 from xmltramp2 import xmltramp
@@ -134,12 +134,12 @@ def decode_xmlstring(xmlstring):
         }
     }
 
-
     # print(root)
     return db_entry
 
 
 def current_weather(timestamp):
+    xmlstring = build_request_string(openweather_url_bodies[0], API_key, "Leipzig", "de", True)
     root = xmltramp.parse(xmlstring)
 
     weather = {
@@ -159,30 +159,47 @@ def current_weather(timestamp):
 
     astronomy = {
 
-
-
     }
 
     return {"weather": {}, "astronomy": {}}
 
 
+def current_weather_scheduler(schedules):
+    t = time.time()
+    return [schedule for schedule in schedules if not (schedule[3] in ["temperature_real",
+                                                                       "temperature_felt",
+                                                                       "humidity",
+                                                                       "pressure",
+                                                                       "wind_speed",
+                                                                       "wind_direction",
+                                                                       "wind_direction_name",
+                                                                       "wind_direction_code",
+                                                                       "clouds_name",
+                                                                       "view_distance",
+                                                                       "precipitation",
+                                                                       "weather_name",
+                                                                       "sun_set",
+                                                                       "sun_rise"
+                                                                       ] and (t-schedule[2]))]
+
+
 api_functions = [
-    (current_weather, {"history": False, "current": True, "forecast": False}, "weather", {
-        "temperature_real": True,
-        "temperature_felt": True,
-        "humidity": True,
-        "pressure": True,
-        "wind_speed": True,
-        "wind_direction": True,
-        "wind_direction_name": True,
-        "wind_direction_code": True,
-        "clouds_name": True,
-        "view_distance": True,
-        "precipitation": True,
-        "weather_name": True
-    })
+    (current_weather, current_weather_scheduler)
 
 ]
+
+# {"temperature_real": True,
+#  "temperature_felt": True,
+#  "humidity": True,
+#  "pressure": True,
+#  "wind_speed": True,
+#  "wind_direction": True,
+#  "wind_direction_name": True,
+#  "wind_direction_code": True,
+#  "clouds_name": True,
+#  "view_distance": True,
+#  "precipitation": True,
+#  "weather_name": True}
 
 # requ_string = build_request_string(openweather_main_url, API_key, "Leipzig", "de", True)
 # # print(back)

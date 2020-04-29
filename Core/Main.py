@@ -4,6 +4,7 @@ import Core.error_handler as eh
 import json
 from jsonschema import validate
 import matplotlib.pyplot as plt
+from Plugin.API_constants import UNKNOWN
 
 plugin_config_schema = json.loads(open("Plugin/API_config_json_schema.json").read())
 
@@ -13,7 +14,7 @@ files = os.listdir("Plugin/Plugins")
 class API:
     def __init__(self, plugin, config_json):
         self.get_database_snippet = None
-        self.get_status = None
+        self.get_status = lambda: UNKNOWN
         self.is_api = config_json["api"]["has"]
         if self.is_api:
             if config_json["api"]["api_functions"]:
@@ -33,7 +34,10 @@ class Plugin:
         self.main_string = config_json["main"]
         import_main = os.path.splitext(self.main_string)[0]
         self.main = importlib.import_module(f"Plugin.Plugins.{folder}.{import_main}")
-        self.config = eval("self.main." + config_json["config"])
+        if config_json["config"]:
+            self.config = eval("self.main." + config_json["config"])
+        else:
+            self.config = lambda: print(end="")
         if config_json["search_city_list"]:
             self.search_city_list = eval("self.main." + config_json["search_city_list"])
             self.format = eval("self.main." + config_json["format"])

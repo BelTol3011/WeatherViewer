@@ -1,0 +1,12 @@
+{
+  "name": "USA National Weather Service",
+  "main": "Main.py",
+  "search_city_list": null,
+  "api": {
+    "api_functions": null,
+    "get_status": null,
+    "has": false
+  },
+  "config": null,
+  "format": null
+}

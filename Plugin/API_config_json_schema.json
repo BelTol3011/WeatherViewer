@@ -109,7 +109,10 @@
     },
     "config": {
       "$id": "#/properties/config",
-      "type": "string",
+      "type": [
+        "string",
+        "null"
+      ],
       "title": "The function, that opens the config dialogue.",
       "description": "",
       "default": "",
