@@ -20,7 +20,7 @@ from tkinter import StringVar
 API_key = open("Plugin/Plugins/open_weather_map/API_key.txt").read()
 API_key_tkvar: StringVar
 
-print("[OpenWeatherMap] Started loading of database")
+print("[OpenWeatherMap] loading database...")
 city_list_file = open("Plugin/Plugins/open_weather_map/city_list.json", encoding="UTF-8").read()
 city_list = json.loads(city_list_file, encoding="UTF-8")
 print("[OpenWeatherMap] ... finished!")
