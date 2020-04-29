@@ -175,11 +175,14 @@ def start(core_main):
 
     global root, search_bar, menu_bar, api_list_box, search_list_box_frame, status_bar, search_listboxes, \
         select_city_info_label, latitude_entry, longitude_entry, theme_var, CORE_MAIN, api_status_list_box, city_listbox, \
-        city_select_remove_button, city_select_add_button
+        city_select_remove_button, city_select_add_button, pause_image, play_image
     CORE_MAIN = core_main
     root = themed_tk.ThemedTk(theme=THEME)
     root.title("WeatherViewer by JHondah and Belissimo")
     root.protocol("WM_DELETE_WINDOW", quit)
+
+    play_image = PhotoImage(file="GUI/icons/play_1.gif")
+    # pause_image = PhotoImage(file="GUI/icons/pause_1.bmp")
 
     menu_bar = Menu(master=root)
     # MENU CONFIGURATION -------------------------------------------------------
@@ -312,6 +315,15 @@ def start(core_main):
     city_select_remove_button.pack(expand=1, fill=X, side=LEFT)
 
     apis_frame = LabelFrame(master=main_paned_window, relief=GROOVE, borderwidth=5, text="API Manager", labelanchor=N)
+
+    api_button_frame = Frame(apis_frame)
+    api_button_frame.pack(fill=X, side=TOP)
+
+    apis_play_button = Button(api_button_frame, image=play_image)
+    apis_play_button.pack(side=LEFT)
+
+    apis_pause_button = Button(api_button_frame, image=pause_image)
+    apis_pause_button.pack(side=LEFT)
 
     apis_text_frame = Frame(master=apis_frame)
     apis_text_frame.pack(fill=X, side=TOP, anchor=N)
@@ -470,3 +482,5 @@ selected: bool = False
 city_listbox: Listbox
 city_select_remove_button: Button
 city_select_add_button: Button
+play_image: Image
+pause_image: Image

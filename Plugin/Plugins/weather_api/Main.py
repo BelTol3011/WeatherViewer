@@ -51,7 +51,7 @@ def format(city):
 
 
 def nullo(lol):
-    return [{"name": "This is a city"}]
+    return [{"name": "This is a city", "country": "DE", "coord": {"lat": 0, "lon": -0}}]
 
 
 def nullol(lol):
