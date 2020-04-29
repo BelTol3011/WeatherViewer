@@ -1,3 +1,5 @@
+import numpy as np
+import matplotlib.pyplot as plt
 
 def get_matplotlib_figure_weather_new():
 

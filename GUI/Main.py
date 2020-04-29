@@ -166,6 +166,7 @@ def open_api_config(core_main):
 
 def start(core_main):
     print("[GUI] starting GUI...")
+
     def mouse_wheel(event):
         scroll = round(event.delta / 60) * -1
         api_list_box.yview("scroll", scroll, "units")
@@ -252,7 +253,7 @@ def start(core_main):
     bottom_city_selection_frame.pack(side=BOTTOM, fill=X, anchor=S, padx=10, expand=1)
 
     select_city_info_label_frame = Frame(master=bottom_city_selection_frame)
-    select_city_info_label_frame.pack(side=LEFT, pady=10+2)
+    select_city_info_label_frame.pack(side=LEFT, pady=10 + 2)
 
     select_city_info_label = Label(master=select_city_info_label_frame, anchor=W,
                                    text="Or enter latitude and longitude of you location.")
@@ -428,6 +429,7 @@ def update_statuses():
         api_list_box.insert(END, plugin.name)
         api_status_list_box.insert(END, api_constants.statuses[plugin.api.get_status()])
     print("[GUI] ... finished!")
+
 
 def api_listbox_context_menu_popup_event(event):
     if api_list_box.curselection():

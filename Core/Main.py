@@ -4,8 +4,6 @@ import Core.error_handler as eh
 import json
 from jsonschema import validate
 import matplotlib.pyplot as plt
-import numpy as np
-import Plugin.Main as ApiMain
 
 plugin_config_schema = json.loads(open("Plugin/API_config_json_schema.json").read())
 
@@ -76,7 +74,7 @@ def load_plugins():
             plugins.append(plugin)
         except Exception as e:
             eh.error(f"[Core] Couldn't import plugin \"{name}\": {e}.")
-    print(f"[Core] {len(plugins)} Plugins detected.")
+    print(f"[Core] {len(plugins)} Plugins loaded.")
     return plugins
 
 
@@ -92,77 +90,6 @@ def get_matplotlib_figure_weather():
     return plt.Figure()
 
 
+print("[CORE] loading plugins")
 plugins = load_plugins()
 api_plugins = get_apis(plugins)
-
-
-database = {
-    # Ort
-    (12.3, 23.2): {
-        "data": {
-            "astronomy": {
-                "2020-04-14": {"sunset": 283748323,
-                               "sunrise": 897634534,
-                               "moonset": 8234432278,
-                               "moonrise": 237487823,
-                               "moon_type": {
-                                   "WeatherAPI": "Quarter",
-                                   "OpenWeatherMap": "Quarter"
-                               }
-                               },
-
-            },
-            "weather": {
-                (12864372876, 12864399934): {
-                    "temperature": {
-                        "real": 12,
-                        "felt": 13
-                    },
-                    "wind": {
-                        "direction": "NW",
-                        "degrees": 310,
-                        "speed": 12
-                    },
-                    "clouds": {
-                        "condition": {
-                            "WeatherAPI": "Mäßig bewölkt",
-                            "OpenWeatherMap": "Mittel bewölkt"
-                        }
-                    },
-                    "air": {
-                        "view_distance": 10000,
-                        "pressure": 1000,
-                        "humidity": 39
-                    }
-                },
-                1286437286: {
-                    "temperature": {
-                        "real": -102,
-                        "felt": 13
-                    },
-                    "wind": {
-                        "direction": "NW",
-                        "degrees": 310,
-                        "speed": 12
-                    },
-                    "clouds": {
-                        "condition": {
-                            "WeatherAPI": "Mäßig bewölkt",
-                            "OpenWeatherMap": "Mäßig bewölkt"
-                        }
-                    },
-                    "air": {
-                        "view_distance": 10000,
-                        "pressure": 1000,
-                        "humidity": 39
-                    }
-                },
-            }
-        },
-        "time_zone": 1,
-        "name": "Unknown"
-    },
-}
-
-# for key in database[(12.3, 23.2)]["data"]["weather"]:
-#     print(key, database[(12.3, 23.2)]["data"]["weather"][key]["temperature"]["real"])

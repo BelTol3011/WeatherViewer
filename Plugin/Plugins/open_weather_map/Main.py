@@ -10,7 +10,7 @@ from Plugin.API_constants import *
 
 NAME = "OpenWeatherMap"
 
-openweather_main_url = "https://api.openweathermap.org/data/2.5/weather?"
+openweather_url_bodies = {"current_weather_data": "https://api.openweathermap.org/data/2.5/weather?"}
 # openweather_appID = "75a90db613d4fa920dd60f4bb3be02ef"
 # 75a90db613d4fa920dd60f4bb3be02ef
 
@@ -26,8 +26,6 @@ city_list = json.loads(city_list_file, encoding="UTF-8")
 print("[OpenWeatherMap] ... finished!")
 
 
-
-
 def configure():
     global API_key
     API_key = api_key_entry.get()
@@ -39,7 +37,7 @@ def configure():
 
 
 def test():
-    requ_string = build_request_string(openweather_main_url, API_key, "Berlin", "de", True)
+    requ_string = build_request_string(openweather_url_bodies["current_weather_data"], API_key, "Berlin", "de", True)
     try:
         answer = requests.get(requ_string)
     except requests.ConnectionError:
@@ -87,7 +85,7 @@ def search_city_list(search_string):
     return [city for city in city_list if search_string.lower() in city["name"].lower()][:2000]
 
 
-def build_request_string(bodystring: str, appid: str, cityname: str, country: str, XML: bool):
+def build_request_string(bodystring: str, appid: str, cityname: str, country: str, XML: bool = True):
     # country: de, uk, us  ...
     # api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={your api key}
     # api.openweathermap.org/data/2.5/weather?id={city id}&appid={your api key}
@@ -135,14 +133,56 @@ def decode_xmlstring(xmlstring):
             "humidity": root.humidity("value")
         }
     }
+
+
     # print(root)
     return db_entry
 
 
-api_functions = [
-    (lambda: print(), {})
-]
+def current_weather(timestamp):
+    root = xmltramp.parse(xmlstring)
 
+    weather = {
+        "temperature_real": True,
+        "temperature_felt": True,
+        "humidity": True,
+        "pressure": True,
+        "wind_speed": True,
+        "wind_direction": True,
+        "wind_direction_name": True,
+        "wind_direction_code": True,
+        "clouds_name": True,
+        "view_distance": True,
+        "precipitation": True,
+        "weather_name": True
+    }
+
+    astronomy = {
+
+
+
+    }
+
+    return {"weather": {}, "astronomy": {}}
+
+
+api_functions = [
+    (current_weather, {"history": False, "current": True, "forecast": False}, "weather", {
+        "temperature_real": True,
+        "temperature_felt": True,
+        "humidity": True,
+        "pressure": True,
+        "wind_speed": True,
+        "wind_direction": True,
+        "wind_direction_name": True,
+        "wind_direction_code": True,
+        "clouds_name": True,
+        "view_distance": True,
+        "precipitation": True,
+        "weather_name": True
+    })
+
+]
 
 # requ_string = build_request_string(openweather_main_url, API_key, "Leipzig", "de", True)
 # # print(back)
