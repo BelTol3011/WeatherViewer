@@ -164,6 +164,14 @@ def open_api_config(core_main):
     core_main.api_plugins[api_list_box.curselection()[0]].config()
 
 
+def apis_pause():
+    pass
+
+
+def apis_start():
+    pass
+
+
 def start(core_main):
     print("[GUI] starting GUI...")
 
@@ -175,14 +183,14 @@ def start(core_main):
 
     global root, search_bar, menu_bar, api_list_box, search_list_box_frame, status_bar, search_listboxes, \
         select_city_info_label, latitude_entry, longitude_entry, theme_var, CORE_MAIN, api_status_list_box, city_listbox, \
-        city_select_remove_button, city_select_add_button, pause_image, play_image
+        city_select_remove_button, city_select_add_button, pause_image, play_image, apis_play_button, apis_pause_button
     CORE_MAIN = core_main
     root = themed_tk.ThemedTk(theme=THEME)
     root.title("WeatherViewer by JHondah and Belissimo")
     root.protocol("WM_DELETE_WINDOW", quit)
 
     play_image = PhotoImage(file="GUI/icons/play_1.gif")
-    # pause_image = PhotoImage(file="GUI/icons/pause_1.bmp")
+    pause_image = PhotoImage(file="GUI/icons/pause_1.gif")
 
     menu_bar = Menu(master=root)
     # MENU CONFIGURATION -------------------------------------------------------
@@ -484,3 +492,5 @@ city_select_remove_button: Button
 city_select_add_button: Button
 play_image: Image
 pause_image: Image
+apis_play_button: Button
+apis_pause_button: Button
