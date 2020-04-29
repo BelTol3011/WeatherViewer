@@ -18,8 +18,6 @@ def datestring_to_unix(datestring, type, utc_offsett):
 
     return unixdate_s
 
-
-
 #teststring_type1 = "2020-04-28T18:42:06"
 #print(datestring_to_unix(teststring_type1, 1, 0))
 #print(datestring_to_unix(teststring_type1, 1, -4))
