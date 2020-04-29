@@ -1,3 +1,6 @@
+from threading import Thread
+import copy
+
 database = {
     # Ort
     (12.3, 23.2): {
@@ -35,3 +38,41 @@ database = {
         "name": "Unknown"
     },
 }
+
+
+class Schedules:
+    @staticmethod
+    def get_weather(location, timestamp, aspect):
+        return "weather", location, timestamp, aspect
+
+    @staticmethod
+    def get_astronomy(location, timestamp, aspect):
+        return "astronomy", location, timestamp, aspect
+
+
+def merge(map_one, map_two) -> map:
+    return {}
+
+
+def add_schedule(schedule):
+    global main_schedules
+    main_schedules.append(schedule)
+
+
+def do_schedule(schedules):
+    pass
+
+
+def mainloop():
+    while _mainloop:
+        temp = copy.deepcopy(main_schedules)
+        do_schedule(main_schedules)
+
+
+def data_arrival_handler(location, weather, astronomy):
+    global database
+    database = merge(database, weather)
+
+
+main_schedules = []
+_mainloop: bool = True
