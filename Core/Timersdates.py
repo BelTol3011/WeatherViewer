@@ -22,10 +22,11 @@ def datestring_to_unix(datestring, type, utc_offsett, leaps: bool):
     if leaps:
         for leap_idx in range(len(leap_seconds) - 1, -1, -1):
             l_abs = leap_seconds[leap_idx][0] - leap_seconds[0][0]  # remove 1972 offset
-            print(unixdate_s, " >= ", l_abs, " ", leap_idx)
+
             if unixdate_s >= l_abs:
+                print(unixdate_s, " >= ", l_abs, " ", leap_idx)
                 unixdate_s += leap_seconds[leap_idx][1]
-                print("Added leaps seconds: ", leap_seconds[leap_idx][1])
+                print("Added leaps seconds: ", leap_seconds[leap_idx][1], " -> ", unixdate_s )
                 break
 
     # add utc offsett [hrs]
