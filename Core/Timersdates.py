@@ -8,29 +8,25 @@ from Core.leap_seconds import leap_seconds
 
 def unix_to_datestring(unixdate_s, type, utc_offset):
 
-
     if unixdate_s <= 0:
         result = time.localtime()
+    else:
+        result = time.gmtime(unixdate_s)
 
     #respect utc
     unixdate_s += utc_offset % 24 * 3600
 
-    result = time.gmtime(unixdate_s)
-
-    # print("result:", result)
-    # print("\nyear:", result.tm_year)
-    # print("tm_hour:", result.tm_hour)
+    # print("result:", result) / # print("\nyear:", result.tm_year) /  # print("tm_hour:", result.tm_hour)
 
     if type == 0:  # Standard
-        time_string = time.ctime(unixdate_s)
+        time_string = time.asctime(result)
+        print( time.strftime("%Z %z", result))
 
     if type == 1:  # "2020-04-28T18:42:06"  // OpenWeathermap Date/Time Format
         time_string = time.strftime("%Y-%m-%dT%H:%M:%S", result)
 
     if type == 2:
         time_string = time.strftime("%m/%d/%Y, %H:%M:%S", result)
-
-
 
 
     return time_string
@@ -73,7 +69,17 @@ def datestring_to_unix(datestring, type, utc_offset, leaps: bool):
 
 
 Date = "1995-08-28T18:42:06"
+Date2 = "2020-05-01T22:15:00"
 
 v1 = datestring_to_unix(Date, 1, 0, False)
+v2 = datestring_to_unix(Date2, 1, 0, False)
+#print(Date, " -> ", unix_to_datestring(v1, 0, 0))
+#print(Date, " -> ", unix_to_datestring(v1, 1, 0))
+#print(Date, " -> ", unix_to_datestring(v1, 2, 0))
 
-print(Date, " -> ", unix_to_datestring(v1, 1, 0))
+print(Date2, " -> ", unix_to_datestring(v2, 0, 0))
+print(Date2, " -> ", unix_to_datestring(v2, 1, 0))
+print(Date2, " -> ", unix_to_datestring(v2, 2, 0))
+
+
+print("no nr given: ", unix_to_datestring(0, 0, 0))
