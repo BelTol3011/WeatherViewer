@@ -140,7 +140,7 @@ def decode_xmlstring(xmlstring):
     return db_entry
 
 
-def current_weather(timestamp, location, ):
+def current_weather(timestamp, location):
     xmlstring = build_request_string(openweather_url_bodies[0], API_key, "Leipzig", "de", True)
     root = xmltramp.parse(xmlstring)
 

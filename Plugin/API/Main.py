@@ -24,12 +24,13 @@ database = {
                     "clouds_name": "covered",
                     "view_distance": 10000,
                     "precipitation": "none",
-                    "weather_name": "good"
+                    "weather_name": "cloudy",
+                    "source": "OpenWeatherMap"
                 },
             }
         },
         "time_zone": 1,
-        "name": "Unknown"
+        "name": "Obermatschingen"
     },
 }
 
@@ -53,14 +54,14 @@ def add_schedule(schedule):
     main_schedules.append(schedule)
 
 
-def do_schedule(schedules):
+def do_schedules(schedules):
     pass
 
 
 def mainloop():
     while _mainloop:
         temp = copy.deepcopy(main_schedules)
-        do_schedule(main_schedules)
+        do_schedules(main_schedules)
 
 
 def data_arrival_handler(location, weather, astronomy):
