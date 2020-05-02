@@ -25,6 +25,8 @@ city_list_file = open("Plugin/Plugins/open_weather_map/city_list.json", encoding
 city_list = json.loads(city_list_file, encoding="UTF-8")
 print("[OpenWeatherMap] ... finished!")
 
+time_accuracy = 60 * 30
+
 
 def configure():
     global API_key
@@ -138,7 +140,7 @@ def decode_xmlstring(xmlstring):
     return db_entry
 
 
-def current_weather(timestamp):
+def current_weather(timestamp, location, ):
     xmlstring = build_request_string(openweather_url_bodies[0], API_key, "Leipzig", "de", True)
     root = xmltramp.parse(xmlstring)
 
@@ -165,7 +167,6 @@ def current_weather(timestamp):
 
 
 def current_weather_scheduler(schedules):
-    t = time.time()
     return [schedule for schedule in schedules if not (schedule[3] in ["temperature_real",
                                                                        "temperature_felt",
                                                                        "humidity",
@@ -178,9 +179,7 @@ def current_weather_scheduler(schedules):
                                                                        "view_distance",
                                                                        "precipitation",
                                                                        "weather_name",
-                                                                       "sun_set",
-                                                                       "sun_rise"
-                                                                       ] and (t-schedule[2]))]
+                                                                       ])]
 
 
 api_functions = [

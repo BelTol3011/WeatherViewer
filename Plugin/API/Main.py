@@ -6,16 +6,10 @@ database = {
     (12.3, 23.2): {
         "data": {
             "astronomy": {
-                "2020-04-14": {"sun_set": 283748323,
-                               "sun_rise": 897634534,
-                               "moon_set": 8234432278,
-                               "moon_rise": 237487823,
-                               "moon_name": {
-                                   "WeatherAPI": "Quarter",
-                                   "OpenWeatherMap": "Quarter"
-                               }
-                               },
-
+                "sun_set": [283748323],
+                "sun_rise": [897634534],
+                "moon_set": [8234432278],
+                "moon_rise": [237487823]
             },
             "weather": {
                 (12864372876, 12864399934): {
