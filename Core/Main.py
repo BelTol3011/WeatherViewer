@@ -5,6 +5,7 @@ import json
 from jsonschema import validate
 import matplotlib.pyplot as plt
 from Plugin.API_constants import UNKNOWN
+import GUI.DataVisualisation as data_visualizations
 
 plugin_config_schema = json.loads(open("Plugin/API_config_json_schema.json").read())
 
@@ -91,7 +92,7 @@ def get_apis(plugins):
 
 
 def get_matplotlib_figure_weather():
-    return plt.Figure()
+    return data_visualizations.get_matplotlib_figure_weather_new()
 
 
 print("[CORE] loading plugins")

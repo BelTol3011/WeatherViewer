@@ -18,6 +18,7 @@ openweather_url_bodies = {"current_weather_data": "https://api.openweathermap.or
 from tkinter import StringVar
 
 API_key = open("Plugin/Plugins/open_weather_map/API_key.txt").read()
+
 API_key_tkvar: StringVar
 
 print("[OpenWeatherMap] loading database...")

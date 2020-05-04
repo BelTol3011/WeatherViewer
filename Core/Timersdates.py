@@ -52,6 +52,9 @@ def datestring_to_unix(datestring, type, utc_offset_manual, leaps: bool):
     Seps = ["/", ".", "-", " ", ":", "T"]
     unixdate_s = 0
 
+    if type == 0:
+        unixdate_s = time.mktime(time.localtime())
+
     if type == 1:
         # "2020-04-28T18:42:06"  // OpenWeathermap Date/Time Format
         unixdate_s = time.mktime(datetime.datetime.strptime(datestring, "%Y" + Seps[2] + "%m" + Seps[2] + "%d"
