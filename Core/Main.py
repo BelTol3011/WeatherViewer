@@ -68,7 +68,7 @@ def load_plugins():
             if "config.json" not in os.listdir(f"Plugin/Plugins/{file}"):
                 continue
 
-            plugin_config = json.loads(open(f"Plugin/Plugins/{file}/config.json").read())
+            plugin_config = json.loads(open(f"Plugin/Plugins/{file}/config.json", "r", encoding="utf-8").read())
             validate(plugin_config, plugin_config_schema)
 
             name = plugin_config["name"]

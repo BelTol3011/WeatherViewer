@@ -1,5 +1,6 @@
 print("[Launch] preloading GUI")
-import GUI.Main as GuiMain
+
+from GUI import Main as GuiMain
 
 print("[Launch] ... finished!")
 
